@@ -17,7 +17,7 @@ import setup, {
   repeat,
   imports,
   times
-} from 'boardzilla/game';
+} from '@boardzilla/core/game';
 
 import ElektroSVG from './elektro-svg';
 import LightningSVG from './lightning-svg';

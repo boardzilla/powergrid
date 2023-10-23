@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "license": "MIT",
   "dependencies": {
-    "boardzilla": "link:../../boardzilla-core",
+    "@boardzilla/core": "link:../boardzilla-core",
     "react": "^18.2",
     "react-dom": "^18.2"
   },

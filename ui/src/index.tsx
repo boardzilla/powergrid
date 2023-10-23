@@ -1,5 +1,5 @@
 import React from 'react';
-import render, { toggleSetting, choiceSetting, textSetting, numberSetting } from 'boardzilla/ui';
+import render, { toggleSetting, choiceSetting, textSetting, numberSetting } from '@boardzilla/core/ui';
 
 import setup from '../../game/src/index';
 
