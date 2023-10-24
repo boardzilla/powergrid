@@ -12,7 +12,8 @@
       "prod": "npm run build:ui"
     },
     "watchPaths": [
-      "node_modules/@boardzilla/core",
+      "node_modules/@boardzilla/core/game",
+      "node_modules/@boardzilla/core/ui",
       "ui/src",
       "game/src"
     ],

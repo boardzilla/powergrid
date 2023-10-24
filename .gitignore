@@ -3,3 +3,4 @@
 /game/build
 
 node_modules
+.save-states
