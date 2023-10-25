@@ -95,7 +95,7 @@
     position: absolute;
     z-index: 1;
     color: #fff5;
-    top: 58%;
+    top: 11%;
     right: 10%;
     font-size: 200%;
     margin-right: 18%;
@@ -213,15 +213,13 @@
     }
     .Resource {
       &.selectable {
-        img:not(:hover) {
-          filter: drop-shadow(1em 1em 1em yellow)
-        }
+        filter: drop-shadow(1em 1em 1em yellow);
         &:hover {
-          filter: drop-shadow(1em 1em 1em red)
+          filter: drop-shadow(1em 1em 1em red);
         }
       }
       img {
-        filter: drop-shadow(1em 1em .5em #222)
+        filter: drop-shadow(1em 1em .5em #222);
       }
     }
   }
@@ -290,10 +288,6 @@
     .name {
       font-size: 75%;
     }
-  }
-
-  .Card {
-    transform-origin: top left;
   }
 
   .ResourceSpace .cost {

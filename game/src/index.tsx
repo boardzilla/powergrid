@@ -923,7 +923,7 @@ export default setup({
     deck.layout(Card, {
       direction: 'ltr',
       offsetColumn: { x: 10, y: 10 },
-      alignment: 'bottom',
+      alignment: 'top right',
       margin: 1,
       rows: 1,
       limit: 3
