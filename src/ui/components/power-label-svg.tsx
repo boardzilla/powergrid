@@ -1,6 +1,6 @@
 import React from "react";
 
-export default ({cost} : {cost: number}) => {
+export default (cost: number) => {
   const color = cost >= 10 ? "#fbff89" : 'white';
   if (cost === 0) return null;
   return (

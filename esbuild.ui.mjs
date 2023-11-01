@@ -11,8 +11,8 @@ await esbuild.build({
     '.ogg': 'dataurl',
   },
   keepNames: true,
-  outdir: 'ui/build',
-  entryPoints: ['ui/src/index.tsx'],
+  outdir: 'build/ui',
+  entryPoints: ['src/ui/index.tsx'],
   bundle: true,
   plugins: [sassPlugin()]
 })

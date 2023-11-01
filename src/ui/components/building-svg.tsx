@@ -1,5 +1,5 @@
 import React from "react";
-import { Building } from './';
+import { Building } from '../../game';
 
 export default (building: Building) => (
   <svg

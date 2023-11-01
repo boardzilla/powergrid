@@ -1,0 +1,435 @@
+@import "https://db.onlinewebfonts.com/c/69dbc1186412d7831b88d8a78a360360?family=DIN+Condensed+Web";
+
+/* ../boardzilla-core/ui/styles/game.scss */
+@layer game {
+  body {
+    margin: 0;
+    padding: 0;
+  }
+  #game #play-area {
+    overflow: hidden;
+    position: relative;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+  }
+  #game #play-area * {
+    box-sizing: border-box;
+  }
+  #game #play-area img {
+    -webkit-user-drag: none;
+    pointer-events: none;
+  }
+  #game #play-area .Space > img {
+    width: 100%;
+    height: 100%;
+  }
+  #game #play-area .Space > .bz-default {
+    width: 100%;
+    height: 100%;
+    background: #ccc;
+  }
+  #game #play-area .Piece > img {
+    width: 100%;
+    height: 100%;
+  }
+  #game #play-area .Piece > .bz-default {
+    width: 100%;
+    height: 100%;
+    background: #ccf;
+    border: 0.1em solid white;
+    padding: 0.1em;
+    overflow: hidden;
+  }
+  #game #play-area .dragging {
+    z-index: 100;
+    pointer-events: none;
+  }
+  #game #play-area .droppable > .bz-default {
+    border: 0.1em solid red;
+  }
+  #game #play-area .transform-wrapper {
+    position: absolute;
+    transform-origin: top left;
+    transition:
+      top 0.6s,
+      left 0.6s,
+      width 0.6s,
+      height 0.6s;
+  }
+  #game #play-area .transform-wrapper.animating {
+    transition:
+      transform 0.6s,
+      top 0.6s,
+      left 0.6s,
+      width 0.6s,
+      height 0.6s;
+    z-index: 100;
+  }
+  #game #play-area .transform-wrapper > div {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+  }
+  #game #play-area.in-drag-movement .transform-wrapper {
+    transition: none;
+  }
+  #game #play-area .clickable {
+    cursor: pointer;
+  }
+  #game #play-area .selectable > .bz-default {
+    border: 0.1em solid yellow;
+  }
+  #game #play-area .selectable > .bz-default:hover {
+    border: 0.1em solid red;
+  }
+  #game #play-area .selected {
+    transform: scale(1.2);
+  }
+  #game .player-controls {
+    z-index: 150;
+    position: absolute;
+    padding: 0.25rem;
+    font-size: 0.75rem;
+    background: rgba(255, 255, 255, 0.8);
+  }
+  #game .player-controls form {
+    margin: 0;
+    display: inline-block;
+  }
+  #game .player-controls input {
+    border-width: 0.05rem;
+  }
+  #game .player-controls input,
+  #game .player-controls select,
+  #game .player-controls button {
+    padding: 0.2rem 0.4rem;
+    font-family: inherit;
+    font-size: inherit;
+    margin: 0.1rem;
+  }
+  #game .player-controls input,
+  #game .player-controls select {
+    max-width: 100%;
+  }
+  #game .player-controls button {
+    border: none;
+    background: #ccc;
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+  #game .player-controls button:hover {
+    transform: scale(1.1);
+    box-shadow: 0.2rem 0.2rem 0.5rem rgba(0, 0, 0, 0.5333333333);
+  }
+  #game .player-controls input[type=number]::-webkit-inner-spin-button,
+  #game .player-controls input[type=number]::-webkit-outer-spin-button {
+    opacity: 1;
+  }
+  #game .god-mode-enabled {
+    position: absolute;
+    top: 0;
+    left: 0;
+    font-size: 0.5rem;
+    padding: 0.2rem;
+    background: red;
+    color: white;
+    z-index: 200;
+  }
+  #game .game-finished {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translateY(-50%) translateX(-50%);
+    font-size: 1.5rem;
+    padding: 0.5rem;
+    background: red;
+    color: white;
+    z-index: 200;
+  }
+}
+
+/* src/ui/style.scss */
+#game {
+  font-family: "Din Condensed Web";
+  font-size: 8%;
+}
+#play-area .selectable {
+  border: none;
+}
+#play-area #germany img#germany {
+  width: 222.2222%;
+  height: 100%;
+  position: absolute;
+  left: -5%;
+}
+#play-area #deck,
+#play-area #powerplants,
+#play-area #resources,
+#play-area .PlayerMat {
+  background: rgba(255, 255, 255, 0.6666666667);
+}
+#play-area .City.selectable svg {
+  filter: drop-shadow(0em 0em 1.5em #003);
+}
+#play-area .City .name {
+  color: black;
+  background: black;
+  padding: 5%;
+  position: absolute;
+  bottom: -20%;
+  font-size: 120%;
+  width: 100%;
+  text-align: center;
+}
+#play-area .City .name > div {
+  background: white;
+}
+#play-area .City[data-zone=green] {
+  color: green;
+}
+#play-area .City[data-zone=red] {
+  color: red;
+}
+#play-area .City[data-zone=brown] {
+  color: brown;
+}
+#play-area .City[data-zone=yellow] {
+  color: #550;
+}
+#play-area .City[data-zone=blue] {
+  color: blue;
+}
+#play-area .City[data-zone=purple] {
+  color: purple;
+}
+#play-area .City .Building svg {
+  filter: drop-shadow(1em 1em 1em black);
+}
+#play-area .City .Building svg.powered {
+  filter: drop-shadow(0px 0px 2em #fc0) drop-shadow(0px 0px 2em #fc0) brightness(4);
+}
+#play-area .ResourceSpace .cost {
+  position: absolute;
+  left: 0;
+  top: 12%;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+  color: white;
+  font-size: 750%;
+  text-align: center;
+  font-weight: bold;
+}
+#play-area .ResourceSpace .cost.empty {
+  color: black;
+}
+#play-area .Resource {
+  background: none;
+}
+#play-area .Building {
+  background: none;
+}
+#play-area #deck div.count {
+  text-align: right;
+  position: absolute;
+  z-index: 1;
+  color: rgba(255, 255, 255, 0.3333333333);
+  top: 11%;
+  right: 10%;
+  font-size: 200%;
+  margin-right: 18%;
+}
+#play-area .Card {
+  background: none;
+}
+#play-area .Card.selectable > div.outer {
+  box-shadow: 0em 0em 3em rgba(255, 255, 0, 0.5333333333);
+  background: #cc0;
+}
+#play-area .Card > div.outer {
+  border-radius: 7%;
+  border: 0.1em solid black;
+  width: 100%;
+  height: 100%;
+  box-shadow: 0.2em 0.2em 0.2em rgba(0, 0, 0, 0.4);
+  background: #999;
+}
+#play-area .Card > div.outer img.background {
+  left: 7%;
+  top: 7%;
+  width: 86%;
+  height: 70%;
+  position: absolute;
+}
+#play-area .Card > div.outer > div.inner {
+  border-radius: 4%;
+  border: 0.1em solid black;
+  position: absolute;
+  left: 7%;
+  top: 7%;
+  width: 86%;
+  height: 86%;
+}
+#play-area .Card > div.outer > div.inner .cost {
+  font-weight: bold;
+  color: white;
+  text-shadow:
+    0.1em 0 0 #000,
+    -0.05em 0 0 #000,
+    0 -0.05em 0 #000,
+    0 0.1em 0 #000,
+    0.1em -0.05em 0 #000,
+    -0.05em -0.05em 0 #000,
+    0.1em 0.1em 0 #000,
+    -0.05em 0.1em 0 #000;
+  font-size: 280%;
+  position: absolute;
+  left: -3%;
+  top: -5%;
+}
+#play-area .Card > div.outer > div.inner .cost .old-cost {
+  text-decoration: line-through;
+  vertical-align: text-top;
+}
+#play-area .Card > div.outer > div.inner .cost .new-cost {
+  font-size: 140%;
+  color: yellow;
+  vertical-align: text-top;
+}
+#play-area .Card > div.outer > div.inner .production {
+  position: absolute;
+  width: 100%;
+  height: 20%;
+  left: 0%;
+  bottom: 0%;
+  text-align: center;
+}
+#play-area .Card > div.outer > div.inner .production.oil {
+  background: #555;
+}
+#play-area .Card > div.outer > div.inner .production.coal,
+#play-area .Card > div.outer > div.inner .production.hybrid {
+  background: #a17c45;
+}
+#play-area .Card > div.outer > div.inner .production.garbage {
+  background: #fc6;
+}
+#play-area .Card > div.outer > div.inner .production.uranium {
+  background: #d44;
+}
+#play-area .Card > div.outer > div.inner .production.clean {
+  background: #35f;
+}
+#play-area .Card > div.outer > div.inner .production > img {
+  width: 15%;
+  height: 70%;
+  top: -10%;
+  position: relative;
+  margin: 1%;
+}
+#play-area .Card > div.outer > div.inner .production > svg {
+  top: 0%;
+  position: relative;
+  width: 22%;
+  height: 100%;
+}
+#play-area .Card > div.outer > div.inner .hybrid2 {
+  background: #555;
+  position: absolute;
+  top: 50%;
+  height: 50%;
+  width: 100%;
+}
+#play-area .Card > div.outer .step-3 {
+  position: absolute;
+  font-size: 260%;
+  text-align: center;
+  width: 100%;
+  background: #aaa;
+  bottom: 0;
+  border-top: 0.1em solid black;
+}
+#play-area .Card .Resource.selectable {
+  filter: drop-shadow(1em 1em 1em yellow);
+}
+#play-area .Card .Resource.selectable:hover {
+  filter: drop-shadow(1em 1em 1em red);
+}
+#play-area .Card .Resource img {
+  filter: drop-shadow(1em 1em 0.5em #222);
+}
+#play-area .PlayerMat .elektro {
+  height: 40%;
+  width: 16%;
+  top: 50%;
+  position: absolute;
+  left: 2%;
+}
+#play-area .PlayerMat .lightning {
+  top: 5%;
+  position: absolute;
+  left: 0%;
+  width: 20%;
+  height: 40%;
+}
+#play-area .PlayerMat .name {
+  color: white;
+  font-size: 150%;
+  width: 30%;
+  height: 20%;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  padding: 0.1em 0.4em;
+  border-radius: 0.2em 0 0 0.2em;
+}
+#play-area .PlayerMat .divider {
+  width: 70%;
+  position: absolute;
+  bottom: 0;
+  height: 3%;
+}
+#play-area .PlayerMat[mine] .name {
+  top: 0;
+}
+.player-controls {
+  box-shadow: 0.2em 0.2em 0.4em rgba(0, 0, 0, 0.8);
+  background: linear-gradient(to bottom, rgba(153, 153, 204, 0.8), rgba(170, 170, 255, 0.8) 85%, rgba(153, 153, 204, 0.8));
+}
+.player-controls.step-purchaseResources {
+  font-size: 0.5rem;
+}
+.player-controls.step-purchaseResources button,
+.player-controls.step-purchaseResources input {
+  padding: 0.1rem 0.2rem;
+}
+.player-controls.step-auction,
+.player-controls.step-bid,
+.player-controls.step-purchaseResources {
+  text-align: right;
+}
+.player-controls button {
+  border-radius: 0.2em;
+  text-shadow: 0.1em 0.1em 0 rgba(255, 255, 255, 0.3333333333);
+  box-shadow: 0.1em 0.1em 0.2em rgba(0, 0, 0, 0.5333333333), inset 0.1em 0.1em 0 rgba(255, 255, 255, 0.6);
+  background: linear-gradient(to bottom, #dcd, #aab 85%, #cce);
+}
+#game.portrait .PlayerMat {
+  background: white;
+}
+#game.portrait .PlayerMat .name {
+  font-size: 75%;
+}
+#game.portrait .ResourceSpace .cost {
+  font-size: 450%;
+}
+#game.portrait #player-controls {
+  font-size: 0.3rem;
+  padding: 0.1rem;
+}
+#game.portrait #player-controls.auction,
+#game.portrait #player-controls.bid,
+#game.portrait #player-controls.purchaseResources {
+  text-align: right;
+}

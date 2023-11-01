@@ -5,11 +5,11 @@
   font-size: 8%;
 }
 
-.selectable {
-  outline: none;
-}
-
 #play-area {
+  .selectable {
+    border: none;
+  }
+
   #germany {
     img#germany {
       width: 222.2222%;

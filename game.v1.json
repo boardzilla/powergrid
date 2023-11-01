@@ -14,10 +14,10 @@
     "watchPaths": [
       "node_modules/@boardzilla/core/game",
       "node_modules/@boardzilla/core/ui",
-      "ui/src",
-      "game/src"
+      "src/ui",
+      "src/game"
     ],
-    "outDir": "ui/build"
+    "outDir": "build/ui"
   },
   "game": {
     "root": ".",
@@ -27,8 +27,8 @@
     },
     "watchPaths": [
       "node_modules/@boardzilla/core/game",
-      "game/src"
+      "src/game"
     ],
-    "out": "game/build/game-interface.js"
+    "out": "build/game/game-interface.js"
   }
 }
