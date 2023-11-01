@@ -1,6 +1,5 @@
 # build artifacts
-/ui/build
-/game/build
+build
 
 node_modules
 .save-states
