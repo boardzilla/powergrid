@@ -456,7 +456,7 @@ export default createGame({
       }).do(
         card => card.auction = true
       ).message(
-        card => `${player} put ${card} up for auction`
+        card => `{{player}} put ${card} up for auction`
       ),
 
       bid: action({
@@ -624,7 +624,7 @@ export default createGame({
 
                   ({ auctionPlayer }) => {
                     const winner = board.playerWithHighestBid!;
-                    board.message(`${winner.name} won the bid with ${board.lastBid}`);
+                    board.message(`${winner} won the bid with ${board.lastBid}`);
                     winner.elektro -= board.lastBid!;
                     board.lastBid = undefined;
                     powerplants.first(Card, {auction: true})!.putInto(board.first(PlayerMat, {player: winner})!);
@@ -704,7 +704,7 @@ export default createGame({
               if (board.players.max('score') < victory[board.players.length - 2]) {
                 const rev = income[powerPlayer.cities];
                 powerPlayer.elektro += rev;
-                board.message(`${powerPlayer.name} earned ${rev} elektro for ${powerPlayer.cities} ${powerPlayer.cities === 1 ? 'city' : 'cities'}`);
+                board.message(`${powerPlayer} earned ${rev} elektro for ${powerPlayer.cities} ${powerPlayer.cities === 1 ? 'city' : 'cities'}`);
 
                 // unpower plants
                 powerPlayer.cities = 0;
@@ -718,7 +718,7 @@ export default createGame({
         () => {
           if (board.players.max('score') >= victory[board.players.length - 2]) {
             const winner = board.players.withHighest('cities', 'elektro');
-            board.message(`${winner.name} wins with ${winner.cities} cities!`)
+            board.message(`${winner} wins with ${winner.cities} cities!`)
             board.finish(winner);
           } else {
             for (const r of resourceTypes) {
