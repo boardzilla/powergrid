@@ -1,26 +1,44 @@
 @import url(https://db.onlinewebfonts.com/c/69dbc1186412d7831b88d8a78a360360?family=DIN+Condensed+Web);
 
+@media (prefers-color-scheme: dark) {
+  body {
+    background: #335;
+  }
+}
+
 #game {
   font-family: 'Din Condensed Web';
   font-size: 8%;
 }
 
 #play-area {
-  .selectable {
-    border: none;
-  }
-
   #germany {
     img#germany {
       width: 222.2222%;
       height: 100%;
       position: absolute;
       left: -5%;
+      @media (prefers-color-scheme: dark) {
+        filter: brightness(.7);
+      }
+    }
+    circle {
+      @media (prefers-color-scheme: dark) {
+        fill: #aaf;
+      }
+    }
+    line.inner {
+      @media (prefers-color-scheme: dark) {
+        stroke: #ccf;
+      }
     }
   }
 
   #deck, #powerplants, #resources, .PlayerMat {
-    background: #fffa
+    background: #fffa;
+    @media (prefers-color-scheme: dark) {
+      background: #0068;
+    }
   }
 
   .City {
@@ -80,10 +98,16 @@
     &.empty {
       color: black;
     }
+    @media (prefers-color-scheme: dark) {
+      color: black;
+    }
   }
 
   .Resource {
     background: none;
+    @media (prefers-color-scheme: dark) {
+      filter: invert(.6);
+    }
   }
 
   .Building {
@@ -218,6 +242,9 @@
           filter: drop-shadow(1em 1em 1em red);
         }
       }
+      &.selected {
+        filter: drop-shadow(1em 1em 1em red);
+      }
       img {
         filter: drop-shadow(1em 1em .5em #222);
       }
@@ -231,6 +258,9 @@
       top: 50%;
       position: absolute;
       left: 2%;
+      @media (prefers-color-scheme: dark) {
+        filter: invert(1);
+      }
     }
     .lightning {
       top: 5%;
