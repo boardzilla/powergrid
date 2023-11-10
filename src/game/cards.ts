@@ -1,4 +1,4 @@
-import type { Card } from './index';
+import type { Card } from './index.js';
 
 export const cards: Record<string, Partial<Card>> = {
   "oil-03": {
