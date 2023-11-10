@@ -1,13 +1,20 @@
 import React from "react";
+import { City } from '../../game/index.js';
 
-export default (cost: number) => {
-  const color = cost >= 10 ? "#fbff89" : 'white';
-  if (cost === 0) return null;
+export default ({distance, to, from} : {
+  distance: number,
+  to: City,
+  from: City
+}) => {
+  const zones = to.board.gameSetting('zones');
+  const color = distance >= 10 ? "#fbff89" : 'white';
+  if (distance === 0) return null;
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       version="1.1"
       viewBox="0 0 139.729 139.729"
+      className={zones.includes(to.zone) && zones.includes(from.zone) ? '' : 'out-of-zone'}
     >
       <defs>
         <path id="rect1" d="M145.075 80.331H336.71V268.461H145.075z"></path>
@@ -348,7 +355,7 @@ export default (cost: number) => {
           }}
         >
           <tspan x="240.688" y="195.032">
-            <tspan fontSize="134.956">{cost}</tspan>
+            <tspan fontSize="134.956">{distance}</tspan>
           </tspan>
         </text>
       </g>

@@ -40,6 +40,7 @@ const resourceTypes: ResourceType[] = ['coal', 'oil', 'garbage', 'uranium'];
 
 class PowergridBoard extends Board {
   step: number = 1;
+  phase: 'auction' | 'resources' | 'build' | 'power' = 'auction';
   turn: number = 0;
   lastBid?: number;
   playerWithHighestBid?: PowergridPlayer;
@@ -113,6 +114,7 @@ export class Card extends Piece {
     if (availableResources.length >= this.resources!) return availableResources;
   }
 }
+
 Card.hide('name', 'cost', 'resourceType', 'resources', 'power');
 
 export class Resource extends Piece {
@@ -134,7 +136,9 @@ export class City extends Space {
   }
 
   canBuild() {
-    return !this.has(Building, {mine: true}) && this.owners.length < (this.board as PowergridBoard).step;
+    return this.board.gameSetting('zones').includes(this.zone) &&
+      !this.has(Building, {mine: true}) &&
+      this.owners.length < (this.board as PowergridBoard).step;
   }
 
   canBuildFor(elektro: number) {
@@ -555,6 +559,7 @@ export default createGame({
       do: [
         () => {
           board.players.sortBy('score', 'desc'); // and powerplants
+          board.phase = 'auction';
           board.turn += 1;
           for (const player of board.players) player.havePassedAuctionPhase = false;
           powerplants.first(Card)!.discount = true;
@@ -614,6 +619,7 @@ export default createGame({
 
         () => {
           board.players.sortBy('score', 'asc');
+          board.phase = 'resources';
           const discount = powerplants.first(Card, { discount: true });
           if (discount) {
             discount.remove();
@@ -632,6 +638,8 @@ export default createGame({
           }),
         }),
 
+        () => { board.phase = 'build' },
+
         eachPlayer({
           name: 'buildPlayer',
           do: playerActions({
@@ -645,6 +653,7 @@ export default createGame({
         }),
 
         () => {
+          board.phase = 'power';
           if (board.players.max('score') >= victory[board.players.length - 2]) {
             board.message("Final power phase!");
           }
@@ -664,13 +673,16 @@ export default createGame({
                 }
               }),
             }),
-            playerActions({
-              name: 'power',
-              prompt: 'Power your plants',
-              actions: {
-                power: Do.repeat,
-                pass: null
-              }
+            whileLoop({
+              while: true,
+              do: playerActions({
+                name: 'power',
+                prompt: 'Power your plants',
+                actions: {
+                  power: Do.repeat,
+                  pass: Do.break
+                }
+              })
             }),
             ({ powerPlayer }) => {
               // unpower cities

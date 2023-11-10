@@ -12,6 +12,23 @@
 }
 
 #play-area {
+  #step-phase {
+    font-size: .35em;
+    text-align: center;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    z-index: 10;
+    padding: 0.2em 0.5em;
+    background: #fff8;
+    border-radius: 0 0.5em 0 0;
+    border: 0.1em solid black;
+    border-width: 0.1em 0.1em 0 0;
+    img {
+      width: 2.5em;
+    }
+  }
+
   #germany {
     img#germany {
       width: 222.2222%;
@@ -31,6 +48,9 @@
       @media (prefers-color-scheme: dark) {
         stroke: #ccf;
       }
+    }
+    .out-of-zone {
+      filter: contrast(0.2) brightness(1.5);
     }
   }
 
@@ -140,6 +160,10 @@
       height: 100%;
       box-shadow: .2em .2em .2em #0006;
       background: #999;
+      &.powerable {
+        box-shadow: 0em 0em 3em #ff08;
+        background: #cc0;
+      }
       img.background {
         left: 7%;
         top: 7%;
@@ -281,7 +305,7 @@
       border-radius: 0.2em 0 0 0.2em;
     }
     .divider {
-      width: 70%;
+      width: 72%;
       position: absolute;
       bottom: 0;
       height: 3%;

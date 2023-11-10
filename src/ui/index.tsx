@@ -1,6 +1,7 @@
 import React from 'react';
 
 import {
+  choiceSetting,
   boardClasses,
   render,
   times
@@ -25,10 +26,12 @@ import gavel from './assets/gavel.svg';
 import germany from './assets/germany2.svg';
 import CitySVG from './components/city-svg.js';
 import BuildingSVG from './components/building-svg.js';
+import buildingFill from './assets/building.svg';
 import coal from './assets/coal.svg';
 import oil from './assets/oil.svg';
 import garbage from './assets/garbage.svg';
 import uranium from './assets/uranium.svg';
+import resourceBuying from './assets/resources.svg';
 import BuildingOutline from './components/building-outline-svg.js';
 import coalOutline from './assets/coal-outline.svg';
 import oilOutline from './assets/oil-outline.svg';
@@ -38,8 +41,30 @@ import hybridOutline from './assets/hybrid-outline.svg';
 import arrow from './assets/arrow.svg';
 import powerplant from './assets/powerplant.svg';
 import PowerLabelSVG from './components/power-label-svg.js';
+import socket from './assets/socket.svg';
 
 render(setup, {
+  settings: {
+    zones: choiceSetting('Zones', {
+      'blue-yellow': 'Blue & Yellow',
+      'blue-purple': 'Blue & Purple',
+      'yellow-purple': 'Yellow & Purple',
+      'brown-yellow': 'Brown & Yellow',
+      'red-blue': 'Red & Blue',
+      'green-red': 'Green & Red',
+      'green-brown': 'Green & Brown',
+      'blue-yellow-purple': 'Blue, Yellow & Purple',
+      'red-blue-yellow': 'Red, Blue & Yellow',
+      'green-red-brown': 'Green, Red & Brown',
+      'green-red-blue': 'Green, Red & Blue',
+      'green-brown-red-yellow': 'Green, Brown, Red & Yellow',
+      'red-yellow-blue-purple': 'Red, Yellow, Blue & Purple',
+      'green-brown-red-yellow-blue': 'All but Purple',
+      'brown-red-yellow-blue-purple': 'All but Green',
+      'green-brown-red-yellow-blue-purple': 'All',
+    })
+  },
+
   breakpoints: aspectRatio => aspectRatio < 4 / 5 ? 'vertical' : 'default',
 
   layout: (board, breakpoint) => {
@@ -62,9 +87,21 @@ render(setup, {
     if (breakpoint !== 'vertical') {
       board.appearance({ aspectRatio: 8 / 5 });
 
-      board.layout(map, {
-        area: { left: 3, top: -10, width: 45, height: 120 }
-      });
+      let area = { left: 2.4, top: -10, width: 45, height: 120 };
+      const zones = board.gameSetting('zones');
+      if (zones === 'blue-yellow-purple') area = { left: 1, top: -38, width: 51, height: 136 };
+      if (zones === 'red-blue-yellow') area = { left: 1, top: -18, width: 51, height: 136 };
+      if (zones === 'green-red-brown') area = { left: 1, top: 0, width: 51, height: 136 };
+      if (zones === 'green-red-blue') area = { left: 2.5, top: -14, width: 54, height: 144 };
+      if (zones === 'blue-yellow') area = { left: 0, top: -38, width: 51, height: 136 };
+      if (zones === 'blue-purple') area = { left: 0, top: -52, width: 57, height: 152 };
+      if (zones === 'yellow-purple') area = { left: -8, top: -52, width: 57, height: 152 };
+      if (zones === 'brown-yellow') area = { left: -15, top: -24, width: 63, height: 168 };
+      if (zones === 'red-blue') area = { left: 2.5, top: -60, width: 75, height: 200 };
+      if (zones === 'green-red') area = { left: 2.5, top: -19, width: 75, height: 200 };
+      if (zones === 'green-brown') area = { left: -8, top: 0, width: 58.125, height: 155 };
+
+      board.layout(map, { area });
       board.layout(board.all(PlayerMat, { mine: false }), {
         area: { left: 50, top: 0, width: 50, height: 20 },
       });
@@ -159,8 +196,8 @@ render(setup, {
     board.all(City).layout(Building, {
       slots: [
         { top: 5, left: 30, width: 40, height: 40 },
-        { top: 50, left: 5, width: 40, height: 40 },
-        { top: 50, left: 55, width: 40, height: 40 },
+        { top: 35, left: 5, width: 40, height: 40 },
+        { top: 35, left: 55, width: 40, height: 40 },
       ]
     });
 
@@ -254,6 +291,18 @@ render(setup, {
 
     board.disableDefaultAppearance();
 
+    board.appearance({
+      render: () => (
+        <div id="step-phase">
+          Step {board.step}<br/>
+          {board.phase === 'auction' && <img src={gavel}/>}
+          {board.phase === 'resources' && <img src={resourceBuying}/>}
+          {board.phase === 'build' && <img src={buildingFill}/>}
+          {board.phase === 'power' && <img src={socket}/>}
+        </div>
+      )
+    });
+
     board.all(PlayerMat).appearance({
       render: mat => (
         <>
@@ -289,7 +338,15 @@ render(setup, {
     board.all(Resource, {type: 'garbage'}).appearance({ render: () => <img src={garbage}/> });
     board.all(Resource, {type: 'uranium'}).appearance({ render: () => <img src={uranium}/> });
 
-    board.all(City).appearance({ aspectRatio: 1, zoomable: true, render: CitySVG });
+    board.all(City).appearance({
+      aspectRatio: 1,
+      zoomable: true,
+      render: city => (
+        <div className={board.gameSetting('zones').includes(city.zone) || 'out-of-zone'}>
+          {CitySVG(city)}
+        </div>
+      )
+    });
 
     board.all(Building).appearance({ aspectRatio: 1, render: BuildingSVG });
     board.all(PlayerMat).all(Building).appearance({ render: false });
@@ -302,7 +359,7 @@ render(setup, {
       aspectRatio: 1,
       zoomable: card => card.isVisible(),
       render: card => (
-        <div className="outer">
+        <div className={`outer ${card.resourcesAvailableToPower() ? 'powerable' : ''}`}>
           {card.isVisible() && (
             <>
               <img className="background" src={powerplant}/>
