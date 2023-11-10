@@ -364,6 +364,13 @@ render(setup, {
         left: 1.25,
       });
 
+      board.layoutStep('arrange', {
+        element: board.first(PlayerMat, { mine: true })!,
+        bottom: 100,
+        left: 2,
+        width: 32,
+      });
+
       board.layoutStep('power', {
         element: board.first(PlayerMat, { mine: true })!,
         bottom: 100,

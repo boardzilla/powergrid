@@ -16,6 +16,7 @@ import {
   eachPlayer,
   Do,
   boardClasses,
+  union,
 } from '@boardzilla/core';
 
 import { cards } from './cards.js';
@@ -128,12 +129,12 @@ export class City extends Space {
   zone: string
 
   costToBuild() {
-    const closestCity = this.closest(City, city => !!city.first(Building, {mine: true}));
+    const closestCity = this.closest(City, city => city.has(Building, {mine: true}));
     return [10, 15, 20][this.owners.length] + (closestCity ? this.distanceTo(closestCity)! : 0);
   }
 
   canBuild() {
-    return this.owners.length < (this.board as PowergridBoard).step;
+    return !this.has(Building, {mine: true}) && this.owners.length < (this.board as PowergridBoard).step;
   }
 
   canBuildFor(elektro: number) {
@@ -418,7 +419,7 @@ export default createGame({
     return {
       auction: action({
         prompt: 'Choose a factory for auction',
-        condition: !board.first(Card, {auction: true}),
+        condition: !board.has(Card, {auction: true}),
       }).chooseOnBoard({
         choices: powerplants.firstN(board.step === 3 ? 8 : 4, Card),
       }).do(
@@ -458,15 +459,19 @@ export default createGame({
         choices: board.first(PlayerMat, { player })!.all(Card)
       }).do(
         card => {
+          // place each resource onto any other of players' card that has room for it, including the auctioned card
           for (const resource of card.all(Resource)) {
-            const other = resource.container(Card)!.first(Card, other => other !== card && other.spaceFor(resource.type) > 0);
+            let other = union(
+              resource.container(Card)!.all(Card),
+              powerplants.first(Card, {auction: true})
+            ).first(Card, other => other !== card && other.spaceFor(resource.type) > 0);
             if (other) resource.putInto(other);
           }
           card.remove();
         }
       ),
 
-      pass: action({ prompt: 'Pass' }),
+      pass: action({ prompt: 'Done' }),
 
       build: action({
         prompt: 'Select cities for building'
@@ -493,7 +498,7 @@ export default createGame({
 
       power: action({
         prompt: 'Power your plants',
-        condition: !!map.first(Building, {player})
+        condition: map.has(Building, {player})
       }).chooseOnBoard({
         prompt: 'Select plant to power',
         choices: board.all(Card, {mine: true, powered: false}, c => !!c.resourcesAvailableToPower()),
@@ -515,7 +520,7 @@ export default createGame({
       }).chooseFrom({
         expand: true,
         choices: resourceTypes.filter(type => (
-          costOf(type, 1) <= player.elektro && !!board.first(Card, {mine: true}, card => card.spaceFor(type) > 0)
+          costOf(type, 1) <= player.elektro && board.has(Card, {mine: true}, card => card.spaceFor(type) > 0)
         ))
       }).chooseNumber({
         prompt: resource => `Buy ${resource}`,
@@ -599,7 +604,7 @@ export default createGame({
                     deck.top(Card)?.putInto(powerplants);
                     winner.havePassedAuctionPhase = true;
                     if (winner !== auctionPlayer) return Do.repeat;
-                  }
+                  },
                 ],
                 passAuction: null
               }
@@ -648,13 +653,22 @@ export default createGame({
         eachPlayer({
           name: 'powerPlayer',
           do: [
+            whileLoop({
+              while: true,
+              do: playerActions({
+                name: 'arrange',
+                prompt: 'Arrange resources',
+                actions: {
+                  arrangeResources: Do.repeat,
+                  pass: Do.break
+                }
+              }),
+            }),
             playerActions({
               name: 'power',
-              prompt: 'Arrange resources and power your plants',
-              skipIfOnlyOne: true,
+              prompt: 'Power your plants',
               actions: {
                 power: Do.repeat,
-                arrangeResources: Do.repeat,
                 pass: null
               }
             }),
