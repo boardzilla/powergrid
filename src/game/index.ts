@@ -1,9 +1,5 @@
 /**
  * TODO
- * playing zones
- * victory
- * - upon hitting score
- * - income instead creates the victory condition: # of cities powered, remaining elektro
  * 2-player rules add Trust...
  */
 
@@ -151,7 +147,7 @@ export class PlayerMat extends Space {
 }
 
 export class Building extends Piece {
-  powered?: boolean;
+  powered?: boolean = false;
 }
 
 const refill = {
@@ -441,7 +437,9 @@ export default createGame({
       }).do(bid => {
         board.lastBid = bid;
         board.playerWithHighestBid = player;
-      }),
+      }).message(
+        bid => `{{player}} bid ${bid} on ${board.first(Card, {auction: true})}`
+      ),
 
       passAuction: action({
         prompt: 'Pass',
@@ -516,6 +514,7 @@ export default createGame({
           card.powered = true;
           if (!resources) resources = card.firstN(card.resources!, Resource);
           for (const resource of resources) resource.remove();
+          for (const building of map.firstN(card.power!, Building, {mine: true, powered: false})) building.powered = true;
         }
       ),
 
@@ -685,15 +684,13 @@ export default createGame({
               })
             }),
             ({ powerPlayer }) => {
-              // unpower cities
-              for (const building of map.all(Building, { mine: true, powered: true })) building.powered = false;
-
               // count power from plants and number of cities that can be powered
               powerPlayer.cities = Math.min(
-                board.all(Card, { mine: true, powered: true }).sum('power'),
-                map.all(Building, { mine: true }).length,
+                map.all(Building, { mine: true, powered: true }).length,
                 income.length - 1,
               )
+              // unpower cities
+              for (const building of map.all(Building, { mine: true, powered: true })) building.powered = false;
 
               if (board.players.max('score') < victory[board.players.length - 2]) {
                 const rev = income[powerPlayer.cities];

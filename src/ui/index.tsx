@@ -46,13 +46,6 @@ import socket from './assets/socket.svg';
 render(setup, {
   settings: {
     zones: choiceSetting('Zones', {
-      'blue-yellow': 'Blue & Yellow',
-      'blue-purple': 'Blue & Purple',
-      'yellow-purple': 'Yellow & Purple',
-      'brown-yellow': 'Brown & Yellow',
-      'red-blue': 'Red & Blue',
-      'green-red': 'Green & Red',
-      'green-brown': 'Green & Brown',
       'blue-yellow-purple': 'Blue, Yellow & Purple',
       'red-blue-yellow': 'Red, Blue & Yellow',
       'green-red-brown': 'Green, Red & Brown',
@@ -89,11 +82,11 @@ render(setup, {
 
       let area = { left: 2.4, top: -10, width: 45, height: 120 };
       const zones = board.gameSetting('zones');
-      if (zones === 'blue-yellow-purple') area = { left: 1, top: -38, width: 51, height: 136 };
+      if (zones === 'blue-yellow-purple') area = { left: 1, top: -30, width: 51, height: 136 };
       if (zones === 'red-blue-yellow') area = { left: 1, top: -18, width: 51, height: 136 };
       if (zones === 'green-red-brown') area = { left: 1, top: 0, width: 51, height: 136 };
       if (zones === 'green-red-blue') area = { left: 2.5, top: -14, width: 54, height: 144 };
-      if (zones === 'blue-yellow') area = { left: 0, top: -38, width: 51, height: 136 };
+      if (zones === 'blue-yellow') area = { left: 0, top: -30, width: 51, height: 136 };
       if (zones === 'blue-purple') area = { left: 0, top: -52, width: 57, height: 152 };
       if (zones === 'yellow-purple') area = { left: -8, top: -52, width: 57, height: 152 };
       if (zones === 'brown-yellow') area = { left: -15, top: -24, width: 63, height: 168 };
@@ -342,7 +335,7 @@ render(setup, {
       aspectRatio: 1,
       zoomable: true,
       render: city => (
-        <div className={board.gameSetting('zones').includes(city.zone) || 'out-of-zone'}>
+        <div className={board.gameSetting('zones').includes(city.zone) ? '' : 'out-of-zone'}>
           {CitySVG(city)}
         </div>
       )
@@ -355,11 +348,22 @@ render(setup, {
       render: deck => <div className="count">{deck.all(Card).length}</div>
     })
 
+    powerplants.appearance({
+      render: () => {
+        if (board.phase === 'auction' && board.playerWithHighestBid) return (
+          <div style={{background: board.playerWithHighestBid.color}} className="bid">
+            {board.playerWithHighestBid.name} high bid: {board.lastBid}
+          </div>
+        );
+        return null;
+      }
+    })
+
     board.all(Card).appearance({
       aspectRatio: 1,
       zoomable: card => card.isVisible(),
       render: card => (
-        <div className={`outer ${card.resourcesAvailableToPower() ? 'powerable' : ''}`}>
+        <div className={`outer ${card.resourcesAvailableToPower() && card.container(PlayerMat) ? 'powerable' : ''}`}>
           {card.isVisible() && (
             <>
               <img className="background" src={powerplant}/>
@@ -404,7 +408,7 @@ render(setup, {
       board.layoutStep('bid', {
         element: powerplants,
         right: 60,
-        top: 10,
+        top: 35,
         width: 35
       });
 

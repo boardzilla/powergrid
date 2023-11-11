@@ -61,6 +61,20 @@
     }
   }
 
+  #powerplants {
+    .bid {
+      position: absolute;
+      left: 1.9%;
+      top: 6%;
+      font-size: 1.25em;
+      padding: 0.2em 1em 0.2em 0.4em;
+      text-align: right;
+      color: white;
+      clip-path: polygon(100% 0%, 90% 100%, 0% 100%, 0 0);
+      border-radius: 0.3em 0 0 0.3em;
+    }
+  }
+
   .City {
     &.selectable svg {
       filter: drop-shadow(0em 0em 1.5em #003)
@@ -98,9 +112,9 @@
     }
     .Building svg {
       filter: drop-shadow(1em 1em 1em black);
-      &.powered {
-        filter: drop-shadow(0px 0px 2em #fc0) drop-shadow(0px 0px 2em #fc0) brightness(4);
-      }
+    }
+    .Building[data-powered="true"] svg {
+      filter: drop-shadow(0px 0px 2em #fc0) drop-shadow(0px 0px 2em #fc0) brightness(2.5);
     }
   }
 
