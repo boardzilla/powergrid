@@ -350,7 +350,7 @@ render(setup, {
 
     powerplants.appearance({
       render: () => {
-        if (board.phase === 'auction' && board.playerWithHighestBid) return (
+        if (board.phase === 'auction' && board.lastBid && board.playerWithHighestBid) return (
           <div style={{background: board.playerWithHighestBid.color}} className="bid">
             {board.playerWithHighestBid.name} high bid: {board.lastBid}
           </div>

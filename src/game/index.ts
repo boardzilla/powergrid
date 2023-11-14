@@ -410,6 +410,8 @@ export default createGame({
     const map = board.first(Space)!;
     const powerplants = board.first(Space, 'powerplants')!;
     const resources = board.first(Space, 'resources')!;
+    const playerMat = board.first(PlayerMat, { player })!;
+    const cards = playerMat.all(Card);
 
     const costOf = (resource: ResourceType, amount: number) => {
       if (amount > resources.all(resource).length) return Infinity;
@@ -420,25 +422,25 @@ export default createGame({
       auction: action({
         prompt: 'Choose a factory for auction',
         condition: !board.has(Card, {auction: true}),
-      }).chooseOnBoard({
-        choices: powerplants.firstN(board.step === 3 ? 8 : 4, Card),
-      }).do(
-        card => card.auction = true
+      }).chooseOnBoard(
+        'card', powerplants.firstN(board.step === 3 ? 8 : 4, Card)
+      ).do(
+        ({ card }) => card.auction = true
       ).message(
-        card => `{{player}} put ${card} up for auction`
+        `{{player}} put {{card}} up for auction`
       ),
 
       bid: action({
         prompt: 'Bid',
         condition: !player.passedThisAuction
-      }).chooseNumber({
+      }).chooseNumber('bid', {
         min: board.lastBid ? board.lastBid + 1 : board.first(Card, {auction: true})?.purchaseCost(),
         max: player.elektro,
-      }).do(bid => {
+      }).do(({ bid }) => {
         board.lastBid = bid;
         board.playerWithHighestBid = player;
       }).message(
-        bid => `{{player}} bid ${bid} on ${board.first(Card, {auction: true})}`
+        `{{player}} bid {{bid}} on ${board.first(Card, {auction: true})}`
       ),
 
       passAuction: action({
@@ -457,30 +459,26 @@ export default createGame({
 
       scrap: action({
         prompt: 'You must scrap one of your powerplants',
-      }).chooseOnBoard({
-        choices: board.first(PlayerMat, { player })!.all(Card)
-      }).do(
-        card => {
-          // place each resource onto any other of players' card that has room for it, including the auctioned card
-          for (const resource of card.all(Resource)) {
-            let other = union(
-              resource.container(Card)!.all(Card),
-              powerplants.first(Card, {auction: true})
-            ).first(Card, other => other !== card && other.spaceFor(resource.type) > 0);
-            if (other) resource.putInto(other);
-          }
-          card.remove();
+      }).chooseOnBoard(
+        'card', board.first(PlayerMat, { player })!.all(Card)
+      ).do(({ card }) => {
+        // place each resource onto any other of players' card that has room for it, including the auctioned card
+        for (const resource of card.all(Resource)) {
+          let other = union(cards, powerplants.first(Card, {auction: true}))
+            .first(Card, other => other !== card && other.spaceFor(resource.type) > 0);
+          if (other) resource.putInto(other);
         }
-      ),
+        card.remove();
+      }),
 
       pass: action({ prompt: 'Done' }),
 
       build: action({
         prompt: 'Select cities for building'
-      }).move({
-        piece: board.first(PlayerMat, {mine: true})!.first(Building),
-        chooseInto: map.all(City, city => city.canBuildFor(player.elektro)),
-      }).do(city => {
+      }).move(
+        'building', playerMat.first(Building),
+        'city', map.all(City, city => city.canBuildFor(player.elektro))
+      ).do(({ city }) => {
         player.elektro -= city.costToBuild();
         city.owners.push(player);
         player.score = map.all(Building, {mine: true}).length;
@@ -490,60 +488,85 @@ export default createGame({
 
       arrangeResources: action({
         prompt: 'Arrange resources'
-      }).move({
-        promptInto: 'to where',
-        choosePiece: board.first(PlayerMat, {mine: true})!.all(Resource),
-        chooseInto: (resource: Resource) => (
-          resource.container(Card)!.others(Card, card => card.spaceFor(resource.type) > 0)
-        )
-      }),
+      }).move(
+        'resource', playerMat.all(Resource),
+        'card', ({ resource }) => resource.container(Card)!.others(Card, card => card.spaceFor(resource.type) > 0),
+        {
+          promptInto: 'to where'
+        }
+      ),
 
       power: action({
         prompt: 'Power your plants',
         condition: map.has(Building, {player})
-      }).chooseOnBoard({
-        prompt: 'Select plant to power',
-        choices: board.all(Card, {mine: true, powered: false}, c => !!c.resourcesAvailableToPower()),
-      }).chooseOnBoard({
-        prompt: 'Select resources for power',
-        skipIf: (card: Card) => card.resourcesAvailableToPower()!.areAllEqual('type') || card.resourcesAvailableToPower()!.length === card.resources,
-        choices: (card: Card) => card.resourcesAvailableToPower()!,
-        number: (card: Card) => card.resources!,
-      }).do(
-        (card, resources) => {
-          card.powered = true;
-          if (!resources) resources = card.firstN(card.resources!, Resource);
-          for (const resource of resources) resource.remove();
-          for (const building of map.firstN(card.power!, Building, {mine: true, powered: false})) building.powered = true;
+      }).chooseOnBoard(
+        'card', cards.filter(c => !c.powered && !!c.resourcesAvailableToPower()), {
+          prompt: 'Select plant to power',
         }
-      ),
+      ).chooseOnBoard(
+        'resources', ({ card }) => card.resourcesAvailableToPower()!, {
+          prompt: 'Select resources for power',
+          number: ({ card }) => card.resources!,
+          skipIf: ({ card }) => (
+            card.resourcesAvailableToPower()!.areAllEqual('type')
+              || card.resourcesAvailableToPower()!.length === card.resources
+          )
+        }
+      ).do(({ card, resources }) => {
+        card.powered = true;
+        if (!resources) resources = card.firstN(card.resources!, Resource);
+        for (const resource of resources) resource.remove();
+        for (const building of map.firstN(card.power!, Building, {mine: true, powered: false})) building.powered = true;
+      }),
+
+    //   buyResource: action({
+    //     prompt: 'Buy resources'
+    //   }).chooseFrom(
+    //     'type',
+    //     resourceTypes.filter(type => (costOf(type, 1) <= player.elektro && cards.find(card => card.spaceFor(type) > 0)))
+    //   ).chooseNumber('amount', {
+    //     prompt: ({ type }) => `Buy ${type}`,
+    //   // }).combine({
+    //   //   validate: (type, amount) =>
+    //   //     costOf(type, amount) <= player.elektro
+    //   //       && cards.sum(card => card.spaceFor(type)) > amount,
+    //   }).do(({ type, amount }) => {
+    //     player.elektro -= costOf(type, amount);
+    //     for (const resource of resources.firstN(amount, Resource, {type})) {
+    //       resource.putInto(cards.find(card => card.spaceFor(type) > 0)!)
+    //     }
+    //   })
+    // };
 
       buyResource: action({
         prompt: 'Buy resources'
-      }).chooseFrom({
-        expand: true,
-        choices: resourceTypes.filter(type => (
-          costOf(type, 1) <= player.elektro && board.has(Card, {mine: true}, card => card.spaceFor(type) > 0)
-        ))
-      }).chooseNumber({
-        prompt: resource => `Buy ${resource}`,
-        skipIfOnlyOne: false,
-        min: 1,
-        max: type => {
-          let max = 0;
-          while (costOf(type, max) <= player.elektro) max++;
+      }).chooseFrom(
+        'type',
+        resourceTypes.filter(type => (
+          costOf(type, 1) <= player.elektro && cards.find(card => card.spaceFor(type) > 0)
+        )), {
+          expand: true,
+        }
+      ).chooseNumber(
+        'amount', {
+          prompt: ({ type }) => `Buy ${type}`,
+          skipIfOnlyOne: false,
+          min: 1,
+          max: ({ type }) => {
+            let max = 0;
+            while (costOf(type, max) <= player.elektro) max++;
 
-          const plants = board.all(Card, {mine: true}, c => c.resources !== 0);
-          let totalSpace = plants.sum(card => card.spaceFor(type));
-          return Math.min(max, totalSpace);
-        },
-      }).confirm(
-        (type, amount) => `Buy ${amount} ${type} for ${costOf(type, amount)} Elektro?`
-      ).do((type, amount) => {
+            const plants = cards.filter(c => c.resources !== 0);
+            let totalSpace = plants.sum(card => card.spaceFor(type));
+            return Math.min(max, totalSpace);
+          },
+        }
+      ).confirm(
+        ({ type, amount }) => `Buy ${amount} ${type} for ${costOf(type, amount)} Elektro?`
+      ).do(({ type, amount }) => {
         player.elektro -= costOf(type, amount);
-        const plants = board.all(Card, {mine: true}, c => c.resources !== 0);
         for (const resource of resources.firstN(amount, Resource, {type})) {
-          resource.putInto(plants.first(Card, card => card.spaceFor(resource.type) > 0)!)
+          resource.putInto(cards.first(Card, card => card.spaceFor(resource.type) > 0)!)
         }
       })
     };
@@ -553,6 +576,7 @@ export default createGame({
     const map = board.first(Space)!;
     const deck = board.first(Space, 'deck')!;
     const powerplants = board.first(Space, 'powerplants')!;
+
     return whileLoop({
       while: () => true,
       do: [
