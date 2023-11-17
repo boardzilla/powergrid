@@ -431,11 +431,11 @@ export default createGame({
       ),
 
       bid: action({
-        prompt: 'Bid',
         condition: !player.passedThisAuction
       }).chooseNumber('bid', {
         min: board.lastBid ? board.lastBid + 1 : board.first(Card, {auction: true})?.purchaseCost(),
         max: player.elektro,
+        confirm: 'Place bid'
       }).do(({ bid }) => {
         board.lastBid = bid;
         board.playerWithHighestBid = player;
@@ -462,7 +462,7 @@ export default createGame({
       }).chooseOnBoard(
         'card', board.first(PlayerMat, { player })!.all(Card)
       ).do(({ card }) => {
-        // place each resource onto any other of players' card that has room for it, including the auctioned card
+        // place each resource onto any other of players' cards that has room for it, including the auctioned card
         for (const resource of card.all(Resource)) {
           let other = union(cards, powerplants.first(Card, {auction: true}))
             .first(Card, other => other !== card && other.spaceFor(resource.type) > 0);
@@ -476,8 +476,11 @@ export default createGame({
       build: action({
         prompt: 'Select cities for building'
       }).move(
-        'building', playerMat.first(Building),
-        'city', map.all(City, city => city.canBuildFor(player.elektro))
+        'building', playerMat.first(Building)!,
+        'city', map.all(City, city => city.canBuildFor(player.elektro)),
+        {
+          confirm: ({ city }) => `Build ${city.name} for ${city.costToBuild()} Elektro`
+        }
       ).do(({ city }) => {
         player.elektro -= city.costToBuild();
         city.owners.push(player);
@@ -502,6 +505,7 @@ export default createGame({
       }).chooseOnBoard(
         'card', cards.filter(c => !c.powered && !!c.resourcesAvailableToPower()), {
           prompt: 'Select plant to power',
+          skipIfOnlyOne: false,
         }
       ).chooseOnBoard(
         'resources', ({ card }) => card.resourcesAvailableToPower()!, {
@@ -512,63 +516,82 @@ export default createGame({
               || card.resourcesAvailableToPower()!.length === card.resources
           )
         }
-      ).do(({ card, resources }) => {
+      ).do(({ card, resources, n }) => {
         card.powered = true;
         if (!resources) resources = card.firstN(card.resources!, Resource);
         for (const resource of resources) resource.remove();
         for (const building of map.firstN(card.power!, Building, {mine: true, powered: false})) building.powered = true;
       }),
 
-    //   buyResource: action({
-    //     prompt: 'Buy resources'
-    //   }).chooseFrom(
-    //     'type',
-    //     resourceTypes.filter(type => (costOf(type, 1) <= player.elektro && cards.find(card => card.spaceFor(type) > 0)))
-    //   ).chooseNumber('amount', {
-    //     prompt: ({ type }) => `Buy ${type}`,
-    //   // }).combine({
-    //   //   validate: (type, amount) =>
-    //   //     costOf(type, amount) <= player.elektro
-    //   //       && cards.sum(card => card.spaceFor(type)) > amount,
-    //   }).do(({ type, amount }) => {
-    //     player.elektro -= costOf(type, amount);
-    //     for (const resource of resources.firstN(amount, Resource, {type})) {
-    //       resource.putInto(cards.find(card => card.spaceFor(type) > 0)!)
-    //     }
-    //   })
-    // };
-
       buyResource: action({
         prompt: 'Buy resources'
-      }).chooseFrom(
-        'type',
-        resourceTypes.filter(type => (
-          costOf(type, 1) <= player.elektro && cards.find(card => card.spaceFor(type) > 0)
-        )), {
-          expand: true,
+      }).chooseGroup({
+        oil: ['number', {
+          prompt: 'Buy Oil',
+          min: 0,
+          max: cards.sum(card => card.spaceFor('oil'))
+        }],
+        coal: ['number', {
+          prompt: 'Buy Coal',
+          min: 0,
+          max: cards.sum(card => card.spaceFor('coal')),
+        }],
+        garbage: ['number', {
+          prompt: 'Buy Garbage',
+          min: 0,
+          max: cards.sum(card => card.spaceFor('garbage')),
+        }],
+        uranium: ['number', {
+          prompt: 'Buy Uranium',
+          min: 0,
+          max: cards.sum(card => card.spaceFor('uranium')),
+        }],
+      },
+        ({ oil, coal, garbage, uranium }) => (
+          (oil ?? 0) + (coal ?? 0) + (garbage ?? 0) + (uranium ?? 0) > 0 &&
+          costOf('oil', oil ?? 0) + costOf('coal', coal ?? 0) + costOf('garbage', garbage ?? 0) + costOf('uranium', uranium ?? 0) <= player.elektro
+        ),
+        ({ oil, coal, garbage, uranium }) => (
+          `Pay ${costOf('oil', oil ?? 0) + costOf('coal', coal ?? 0) + costOf('garbage', garbage ?? 0) + costOf('uranium', uranium ?? 0)} Elektro`
+        )
+      ).do(({ oil, coal, garbage, uranium }) => {
+        player.elektro -= costOf('oil', oil ?? 0) + costOf('coal', coal ?? 0) + costOf('garbage', garbage ?? 0) + costOf('uranium', uranium ?? 0);
+        if (oil) for (const resource of resources.firstN(oil, Resource, {type: 'oil'})) {
+          resource.putInto(cards.find(card => card.spaceFor('oil') > 0)!)
         }
-      ).chooseNumber(
-        'amount', {
-          prompt: ({ type }) => `Buy ${type}`,
-          skipIfOnlyOne: false,
-          min: 1,
-          max: ({ type }) => {
-            let max = 0;
-            while (costOf(type, max) <= player.elektro) max++;
-
-            const plants = cards.filter(c => c.resources !== 0);
-            let totalSpace = plants.sum(card => card.spaceFor(type));
-            return Math.min(max, totalSpace);
-          },
+        if (coal) for (const resource of resources.firstN(coal, Resource, {type: 'coal'})) {
+          resource.putInto(cards.find(card => card.spaceFor('coal') > 0)!)
         }
-      ).confirm(
-        ({ type, amount }) => `Buy ${amount} ${type} for ${costOf(type, amount)} Elektro?`
-      ).do(({ type, amount }) => {
-        player.elektro -= costOf(type, amount);
-        for (const resource of resources.firstN(amount, Resource, {type})) {
-          resource.putInto(cards.first(Card, card => card.spaceFor(resource.type) > 0)!)
+        if (garbage) for (const resource of resources.firstN(garbage, Resource, {type: 'garbage'})) {
+          resource.putInto(cards.find(card => card.spaceFor('garbage') > 0)!)
+        }
+        if (uranium) for (const resource of resources.firstN(uranium, Resource, {type: 'uranium'})) {
+          resource.putInto(cards.find(card => card.spaceFor('uranium') > 0)!)
         }
       })
+
+      // buyResource: action({
+      //   prompt: 'Buy resources'
+      // }).chooseFrom(
+      //   'type',
+      //   resourceTypes.filter(type => (
+      //     costOf(type, 1) <= player.elektro && cards.find(card => card.spaceFor(type) > 0)
+      //   ))
+      // ).choose(
+      //   'amount', 'number', {
+      //     confirm: ({ type, amount }) => `Buy ${amount} ${type} for ${costOf(type, amount)} Elektro?`,
+      //     validate: ({ type, amount }) => {
+      //       if (amount > resources.all(Resource, {type}).length) return `Not enough ${type}`;
+      //       if (costOf(type, amount) > player.elektro) return `Not enough Elektro`;
+      //       if (amount > cards.sum(card => card.spaceFor(type))) return `Not enough space`;
+      //     }
+      //   }
+      // ).do(({ type, amount, choice, choice2, amount2, pieces }) => {
+      //   player.elektro -= costOf(type, amount);
+      //   for (const resource of resources.firstN(amount, Resource, {type})) {
+      //     resource.putInto(cards.first(Card, card => card.spaceFor(resource.type) > 0)!)
+      //   }
+      // })
     };
   },
 
@@ -689,7 +712,6 @@ export default createGame({
               while: true,
               do: playerActions({
                 name: 'arrange',
-                prompt: 'Arrange resources',
                 actions: {
                   arrangeResources: Do.repeat,
                   pass: Do.break
@@ -700,7 +722,6 @@ export default createGame({
               while: true,
               do: playerActions({
                 name: 'power',
-                prompt: 'Power your plants',
                 actions: {
                   power: Do.repeat,
                   pass: Do.break

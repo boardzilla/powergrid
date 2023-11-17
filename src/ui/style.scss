@@ -29,6 +29,13 @@
     }
   }
 
+  .selectable {
+    transition: transform .2s;
+    &:hover {
+      transform: scale(1.1);
+    }
+  }
+
   #germany {
     img#germany {
       width: 222.2222%;
@@ -276,9 +283,6 @@
     .Resource {
       &.selectable {
         filter: drop-shadow(1em 1em 1em yellow);
-        &:hover {
-          filter: drop-shadow(1em 1em 1em red);
-        }
       }
       &.selected {
         filter: drop-shadow(1em 1em 1em red);
@@ -342,7 +346,9 @@
   &.step-auction, &.step-bid, &.step-purchaseResources {
     text-align: right;
   }
-  button {
+  button, label {
+    padding: .1rem .2rem;
+    border-width: 0;
     border-radius: .2em;
     text-shadow: .1em .1em 0 #fff5;
     box-shadow: .1em .1em .2em #0008, inset .1em .1em 0 #fff9;

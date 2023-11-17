@@ -409,14 +409,12 @@ render(setup, {
         element: powerplants,
         right: 60,
         top: 35,
-        width: 35
       });
 
       board.layoutStep('purchaseResources', {
         element: resources,
         right: 66.6,
         top: 6,
-        width: 30
       });
 
       board.layoutStep('build', {
@@ -429,21 +427,18 @@ render(setup, {
         element: board.first(PlayerMat, { mine: true })!,
         bottom: 100,
         left: 2,
-        width: 32,
       });
 
       board.layoutStep('power', {
         element: board.first(PlayerMat, { mine: true })!,
         bottom: 100,
         left: 2,
-        width: 32,
       });
 
       board.layoutStep('scrap', {
         element: board.first(PlayerMat, { mine: true })!,
         bottom: 100,
         left: 2,
-        width: 32,
       });
 
       board.layoutStep('out-of-turn', {
@@ -458,7 +453,6 @@ render(setup, {
         element: powerplants,
         left: 0,
         top: 100,
-        width: 100
       });
     }
   }
