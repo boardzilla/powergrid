@@ -1,12 +1,13 @@
 import React from "react";
 import { City } from '../../game/index.js';
+import type { PowergridBoard } from '../../game/index.js';
 
 export default ({distance, to, from} : {
   distance: number,
   to: City,
   from: City
 }) => {
-  const zones = to.board.gameSetting('zones');
+  const zones = (to.board as PowergridBoard).zones;
   const color = distance >= 10 ? "#fbff89" : 'white';
   if (distance === 0) return null;
   return (

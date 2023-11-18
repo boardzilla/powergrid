@@ -29,6 +29,15 @@
     }
   }
 
+  #cover {
+    background: #fff6;
+    width: 50%;
+    height: 100%;
+    position: absolute;
+    right: 0;
+    z-index: 1;
+  }
+
   .selectable {
     transition: transform .2s;
     &:hover {
@@ -58,14 +67,14 @@
     }
     .out-of-zone {
       filter: contrast(0.2) brightness(1.5);
+      #game.selectZone & {
+        filter: none;
+      }
     }
   }
 
   #deck, #powerplants, #resources, .PlayerMat {
-    background: #fffa;
-    @media (prefers-color-scheme: dark) {
-      background: #0068;
-    }
+    z-index: 2;
   }
 
   #powerplants {
@@ -92,7 +101,7 @@
       padding: 5%;
       position: absolute;
       bottom: -20%;
-      font-size: 120%;
+      font-size: 1.2em;
       width: 100%;
       text-align: center;
       > div {
@@ -133,7 +142,7 @@
     height: 100%;
     z-index: 10;
     color: white;
-    font-size: 750%;
+    font-size: 7.5em;
     text-align: center;
     font-weight: bold;
     &.empty {
@@ -158,11 +167,11 @@
   #deck div.count {
     text-align: right;
     position: absolute;
-    z-index: 1;
+    z-index: 5;
     color: #fff5;
     top: 11%;
     right: 10%;
-    font-size: 200%;
+    font-size: 2em;
     margin-right: 18%;
   }
 
@@ -212,7 +221,7 @@
             -0.05em -0.05em 0 #000,
             0.1em 0.1em 0 #000,
             -0.05em 0.1em 0 #000;
-          font-size: 280%;
+          font-size: 2.8em;
           position: absolute;
           left: -3%;
           top: -5%;
@@ -221,7 +230,7 @@
             vertical-align: text-top;
           }
           .new-cost {
-            font-size: 140%;
+            font-size: 1.4em;
             color: yellow;
             vertical-align: text-top;
           }
@@ -272,7 +281,7 @@
       }
       .step-3 {
         position: absolute;
-        font-size: 260%;
+        font-size: 2.6em;
         text-align: center;
         width: 100%;
         background: #aaa;
@@ -311,25 +320,37 @@
       width: 20%;
       height: 40%;
     }
+
     .name {
       color: white;
-      font-size: 150%;
-      width: 30%;
+      font-size: 1.5em;
+      text-align: center;
+      width: 22%;
       height: 20%;
       position: absolute;
       right: 0;
       bottom: 0;
       padding: 0.1em 0.4em;
       border-radius: 0.2em 0 0 0.2em;
+      overflow: hidden;
+      white-space: nowrap;
     }
+
+    .avatar {
+      width: 20%;
+      height: auto;
+      position: absolute;
+      right: 1%;
+      top: 2%;
+      border-radius: 50%;
+      border: .5em solid;
+    }
+
     .divider {
-      width: 72%;
+      width: 82%;
       position: absolute;
       bottom: 0;
       height: 3%;
-    }
-    &[mine] .name {
-      top: 0;
     }
   }
 }
@@ -356,16 +377,16 @@
   }
 }
 
-#game.portrait {
+#game.vertical {
   .PlayerMat {
     background: white;
     .name {
-      font-size: 75%;
+      font-size: .75em;
     }
   }
 
   .ResourceSpace .cost {
-    font-size: 450%;
+    font-size: 4.5em;
   }
 
   #player-controls {
@@ -373,6 +394,13 @@
     padding: .1rem;
     &.auction, &.bid, &.purchaseResources {
       text-align: right;
+    }
+  }
+
+  #play-area {
+    #step-phase {
+      font-size: .15em;
+      bottom: 22%;
     }
   }
 }

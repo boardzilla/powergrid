@@ -44,20 +44,19 @@ import PowerLabelSVG from './components/power-label-svg.js';
 import socket from './assets/socket.svg';
 
 render(setup, {
-  settings: {
-    zones: choiceSetting('Zones', {
-      'blue-yellow-purple': 'Blue, Yellow & Purple',
-      'red-blue-yellow': 'Red, Blue & Yellow',
-      'green-red-brown': 'Green, Red & Brown',
-      'green-red-blue': 'Green, Red & Blue',
-      'green-brown-red-yellow': 'Green, Brown, Red & Yellow',
-      'red-yellow-blue-purple': 'Red, Yellow, Blue & Purple',
-      'green-brown-red-yellow-blue': 'All but Purple',
-      'brown-red-yellow-blue-purple': 'All but Green',
-      'green-brown-red-yellow-blue-purple': 'All',
-    })
-  },
-
+  // settings: {
+  //   zones: choiceSetting('Zones', {
+  //     'blue-yellow-purple': 'Blue, Yellow & Purple',
+  //     'red-blue-yellow': 'Red, Blue & Yellow',
+  //     'green-red-brown': 'Green, Red & Brown',
+  //     'green-red-blue': 'Green, Red & Blue',
+  //     'green-brown-red-yellow': 'Green, Brown, Red & Yellow',
+  //     'red-yellow-blue-purple': 'Red, Yellow, Blue & Purple',
+  //     'green-brown-red-yellow-blue': 'All but Purple',
+  //     'brown-red-yellow-blue-purple': 'All but Green',
+  //     'green-brown-red-yellow-blue-purple': 'All',
+  //   })
+  // },
   breakpoints: aspectRatio => aspectRatio < 4 / 5 ? 'vertical' : 'default',
 
   layout: (board, breakpoint) => {
@@ -81,18 +80,11 @@ render(setup, {
       board.appearance({ aspectRatio: 8 / 5 });
 
       let area = { left: 2.4, top: -10, width: 45, height: 120 };
-      const zones = board.gameSetting('zones');
-      if (zones === 'blue-yellow-purple') area = { left: 1, top: -30, width: 51, height: 136 };
-      if (zones === 'red-blue-yellow') area = { left: 1, top: -18, width: 51, height: 136 };
-      if (zones === 'green-red-brown') area = { left: 1, top: 0, width: 51, height: 136 };
-      if (zones === 'green-red-blue') area = { left: 2.5, top: -14, width: 54, height: 144 };
-      if (zones === 'blue-yellow') area = { left: 0, top: -30, width: 51, height: 136 };
-      if (zones === 'blue-purple') area = { left: 0, top: -52, width: 57, height: 152 };
-      if (zones === 'yellow-purple') area = { left: -8, top: -52, width: 57, height: 152 };
-      if (zones === 'brown-yellow') area = { left: -15, top: -24, width: 63, height: 168 };
-      if (zones === 'red-blue') area = { left: 2.5, top: -60, width: 75, height: 200 };
-      if (zones === 'green-red') area = { left: 2.5, top: -19, width: 75, height: 200 };
-      if (zones === 'green-brown') area = { left: -8, top: 0, width: 58.125, height: 155 };
+      const zones = board.zones.sort().join('-');
+      if (zones === 'blue-purple-yellow') area = { left: 1, top: -30, width: 51, height: 136 };
+      if (zones === 'blue-red-yellow') area = { left: 1, top: -18, width: 51, height: 136 };
+      if (zones === 'brown-green-red') area = { left: 1, top: 0, width: 51, height: 136 };
+      if (zones === 'blue-green-red') area = { left: 2.5, top: -14, width: 54, height: 144 };
 
       board.layout(map, { area });
       board.layout(board.all(PlayerMat, { mine: false }), {
@@ -254,15 +246,8 @@ render(setup, {
       });
     }
 
-    board.all(PlayerMat, {mine: false}).layout(Card, {
-      area: { top: 10, left: 22, width: 85, height: 64 },
-      gap: 0.5,
-      columns: 4,
-      direction: 'ltr'
-    });
-
-    board.all(PlayerMat, {mine: true}).layout(Card, {
-      area: { top: 22, left: 22, width: 85, height: 64 },
+    board.all(PlayerMat).layout(Card, {
+      area: { top: 10, left: 12, width: 85, height: 64 },
       gap: 0.5,
       columns: 4,
       direction: 'ltr'
@@ -286,17 +271,21 @@ render(setup, {
 
     board.appearance({
       render: () => (
-        <div id="step-phase">
-          Step {board.step}<br/>
-          {board.phase === 'auction' && <img src={gavel}/>}
-          {board.phase === 'resources' && <img src={resourceBuying}/>}
-          {board.phase === 'build' && <img src={buildingFill}/>}
-          {board.phase === 'power' && <img src={socket}/>}
-        </div>
+        <>
+          <div id="step-phase">
+            Step {board.step}<br/>
+            {board.phase === 'auction' && <img src={gavel}/>}
+            {board.phase === 'resources' && <img src={resourceBuying}/>}
+            {board.phase === 'build' && <img src={buildingFill}/>}
+            {board.phase === 'power' && <img src={socket}/>}
+          </div>
+          <div id="cover"/>
+        </>
       )
     });
 
     board.all(PlayerMat).appearance({
+      aspectRatio: 4,
       render: mat => (
         <>
           <ElektroSVG amount={mat.player.elektro}/>
@@ -304,6 +293,7 @@ render(setup, {
           <div className="name" style={{background: mat.player.color}}>
             {mat.player.name}<br/>
           </div>
+          <img className="avatar" style={{borderColor: mat.player.color}} src={mat.player.avatar}/>
           {mat.mine || <div className="divider" style={{background: mat.player.color}}/>}
         </>
       )
@@ -335,7 +325,7 @@ render(setup, {
       aspectRatio: 1,
       zoomable: true,
       render: city => (
-        <div className={board.gameSetting('zones').includes(city.zone) ? '' : 'out-of-zone'}>
+        <div className={board.zones.includes(city.zone) ? '' : 'out-of-zone'}>
           {CitySVG(city)}
         </div>
       )

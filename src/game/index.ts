@@ -34,10 +34,11 @@ const {
 type ResourceType = 'coal' | 'oil' | 'garbage' | 'uranium'
 const resourceTypes: ResourceType[] = ['coal', 'oil', 'garbage', 'uranium'];
 
-class PowergridBoard extends Board {
+export class PowergridBoard extends Board {
   step: number = 1;
   phase: 'auction' | 'resources' | 'build' | 'power' = 'auction';
   turn: number = 0;
+  zones: string[] = [];
   lastBid?: number;
   playerWithHighestBid?: PowergridPlayer;
   noMoreUranium = false;
@@ -132,7 +133,7 @@ export class City extends Space {
   }
 
   canBuild() {
-    return this.board.gameSetting('zones').includes(this.zone) &&
+    return (this.board as PowergridBoard).zones.includes(this.zone) &&
       !this.has(Building, {mine: true}) &&
       this.owners.length < (this.board as PowergridBoard).step;
   }
@@ -419,6 +420,15 @@ export default createGame({
     };
 
     return {
+      selectZone: action({
+        prompt: 'Choose playing zone',
+      }).chooseOnBoard(
+        'city', board.all(City, city => board.zones.length === 0 || board.all(City, c => (
+          !board.zones.includes(c.zone) &&
+            c.others(City, {adjacent: true}, z => board.zones.includes(z.zone)).length > 0
+        )).map(c => c.zone).includes(city.zone))
+      ).do(({ city }) => board.zones.push(city.zone)),
+
       auction: action({
         prompt: 'Choose a factory for auction',
         condition: !board.has(Card, {auction: true}),
@@ -444,7 +454,7 @@ export default createGame({
       ),
 
       passAuction: action({
-        prompt: 'Pass',
+        prompt: 'Pass this auction',
         condition: board.turn > 1
       }).do(
         () => player.havePassedAuctionPhase = true
@@ -546,16 +556,16 @@ export default createGame({
           min: 0,
           max: cards.sum(card => card.spaceFor('uranium')),
         }],
-      },
-        ({ oil, coal, garbage, uranium }) => (
-          (oil ?? 0) + (coal ?? 0) + (garbage ?? 0) + (uranium ?? 0) > 0 &&
-          costOf('oil', oil ?? 0) + costOf('coal', coal ?? 0) + costOf('garbage', garbage ?? 0) + costOf('uranium', uranium ?? 0) <= player.elektro
+      }, {
+        validate: ({ oil, coal, garbage, uranium }) => (
+          oil + coal + garbage + uranium > 0 &&
+          costOf('oil', oil) + costOf('coal', coal) + costOf('garbage', garbage) + costOf('uranium', uranium) <= player.elektro
         ),
-        ({ oil, coal, garbage, uranium }) => (
-          `Pay ${costOf('oil', oil ?? 0) + costOf('coal', coal ?? 0) + costOf('garbage', garbage ?? 0) + costOf('uranium', uranium ?? 0)} Elektro`
+        confirm: ({ oil, coal, garbage, uranium }) => (
+          `Pay ${costOf('oil', oil) + costOf('coal', coal) + costOf('garbage', garbage) + costOf('uranium', uranium)} Elektro`
         )
-      ).do(({ oil, coal, garbage, uranium }) => {
-        player.elektro -= costOf('oil', oil ?? 0) + costOf('coal', coal ?? 0) + costOf('garbage', garbage ?? 0) + costOf('uranium', uranium ?? 0);
+      }).do(({ oil, coal, garbage, uranium }) => {
+        player.elektro -= costOf('oil', oil) + costOf('coal', coal) + costOf('garbage', garbage) + costOf('uranium', uranium);
         if (oil) for (const resource of resources.firstN(oil, Resource, {type: 'oil'})) {
           resource.putInto(cards.find(card => card.spaceFor('oil') > 0)!)
         }
@@ -601,8 +611,16 @@ export default createGame({
     const powerplants = board.first(Space, 'powerplants')!;
 
     return whileLoop({
-      while: () => true,
+      while: true,
       do: [
+        whileLoop({
+          while: () => board.zones.length < Math.min(5, Math.max(3, board.players.length)),
+          do: playerActions({
+            name: 'selectZone',
+            player: board.players.host(),
+            actions: { selectZone: null }
+          }),
+        }),
         () => {
           board.players.sortBy('score', 'desc'); // and powerplants
           board.phase = 'auction';
@@ -631,7 +649,6 @@ export default createGame({
                     startingPlayer: ({ auctionPlayer }) => auctionPlayer,
                     continueUntil: () => board.lastBid !== undefined && board.players.filter(p => !p.passedThisAuction).length === 1,
                     do: ifElse({
-                      name: 'mayBid',
                       if: ({ biddingPlayer }) => !biddingPlayer.passedThisAuction,
                       do: playerActions({ name: 'bid', actions: { bid: null, passBid: null } })
                     }),
@@ -640,7 +657,7 @@ export default createGame({
                   ifElse({
                     if: () => board.first(PlayerMat, { player: board.playerWithHighestBid! })!.all(Card).length >= 3,
                     do: playerActions({
-                      players: () => board.playerWithHighestBid!,
+                      player: () => board.playerWithHighestBid!,
                       name: 'scrap',
                       actions: { scrap: null }
                     }),
