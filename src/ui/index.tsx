@@ -1,21 +1,19 @@
 import React from 'react';
 
 import {
-  choiceSetting,
-  boardClasses,
   render,
   times
 } from '@boardzilla/core';
 
 import {
   default as setup,
+  Space,
   Card,
   PlayerMat,
   City,
   Building,
   ResourceSpace,
   Resource,
-  PowergridPlayer
 } from '../game/index.js';
 
 import './style.scss';
@@ -44,24 +42,9 @@ import PowerLabelSVG from './components/power-label-svg.js';
 import socket from './assets/socket.svg';
 
 render(setup, {
-  // settings: {
-  //   zones: choiceSetting('Zones', {
-  //     'blue-yellow-purple': 'Blue, Yellow & Purple',
-  //     'red-blue-yellow': 'Red, Blue & Yellow',
-  //     'green-red-brown': 'Green, Red & Brown',
-  //     'green-red-blue': 'Green, Red & Blue',
-  //     'green-brown-red-yellow': 'Green, Brown, Red & Yellow',
-  //     'red-yellow-blue-purple': 'Red, Yellow, Blue & Purple',
-  //     'green-brown-red-yellow-blue': 'All but Purple',
-  //     'brown-red-yellow-blue-purple': 'All but Green',
-  //     'green-brown-red-yellow-blue-purple': 'All',
-  //   })
-  // },
   breakpoints: aspectRatio => aspectRatio < 4 / 5 ? 'vertical' : 'default',
 
   layout: (board, breakpoint) => {
-    const { Space } = boardClasses(PowergridPlayer);
-
     const map = board.first(Space)!;
     const deck = board.first(Space, 'deck')!;
     const resources = board.first(Space, 'resources')!;
