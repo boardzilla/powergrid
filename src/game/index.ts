@@ -134,9 +134,9 @@ export class City extends Space {
   }
 
   canBuild() {
-    return (this.board as PowergridBoard).zones.includes(this.zone) &&
+    return this.board.zones.includes(this.zone) &&
       !this.has(Building, {mine: true}) &&
-      this.owners.length < (this.board as PowergridBoard).step;
+      this.owners.length < this.board.step;
   }
 
   canBuildFor(elektro: number) {
@@ -190,14 +190,16 @@ const refill = {
 const income = [10, 22, 33, 44, 54, 64, 73, 82, 90, 98, 105, 112, 118, 124, 129, 134, 138, 142, 145, 148, 150];
 const victory = [18, 17, 17, 15, 14];
 
-export default createGame(PowergridPlayer, PowergridBoard, [
-  Card,
-  Resource,
-  ResourceSpace,
-  City,
-  Building,
-  PlayerMat
-], board => {
+export default createGame(PowergridPlayer, PowergridBoard, board => {
+  board.registerClasses(
+    Card,
+    Resource,
+    ResourceSpace,
+    City,
+    Building,
+    PlayerMat
+  );
+
   const map = board.create(Space, 'germany');
 
   const cuxhaven = map.create(City, 'Cuxhaven', {zone: 'green'})
@@ -416,7 +418,7 @@ export default createGame(PowergridPlayer, PowergridBoard, [
     }).chooseOnBoard(
       'city', () => board.all(City, city => board.zones.length === 0 || board.all(City, c => (
         !board.zones.includes(c.zone) &&
-          c.others(City, {adjacent: true}, z => board.zones.includes(z.zone)).length > 0
+          c.adjacencies(City, z => board.zones.includes(z.zone)).length > 0
       )).map(c => c.zone).includes(city.zone))
     ).do(({ city }) => board.zones.push(city.zone)),
 
@@ -527,15 +529,15 @@ export default createGame(PowergridPlayer, PowergridBoard, [
     buyResource: player => action({
       prompt: 'Buy resources'
     }).chooseGroup({
-      oil: ['number', {
-        prompt: 'Buy Oil',
-        min: 0,
-        max: board.all(Card, {mine: true}).sum(card => card.spaceFor('oil'))
-      }],
       coal: ['number', {
         prompt: 'Buy Coal',
         min: 0,
         max: board.all(Card, {mine: true}).sum(card => card.spaceFor('coal')),
+      }],
+      oil: ['number', {
+        prompt: 'Buy Oil',
+        min: 0,
+        max: board.all(Card, {mine: true}).sum(card => card.spaceFor('oil'))
       }],
       garbage: ['number', {
         prompt: 'Buy Garbage',
@@ -548,51 +550,27 @@ export default createGame(PowergridPlayer, PowergridBoard, [
         max: board.all(Card, {mine: true}).sum(card => card.spaceFor('uranium')),
       }],
     }, {
-      validate: ({ oil, coal, garbage, uranium }) => (
-        oil + coal + garbage + uranium > 0 &&
-          costOf('oil', oil) + costOf('coal', coal) + costOf('garbage', garbage) + costOf('uranium', uranium) <= player.elektro
+      validate: ({ coal, oil, garbage, uranium }) => (
+        coal + oil + garbage + uranium > 0 &&
+          costOf('coal', coal) + costOf('oil', oil) + costOf('garbage', garbage) + costOf('uranium', uranium) <= player.elektro
       ),
-      confirm: ({ oil, coal, garbage, uranium }) => (
-        `Pay ${costOf('oil', oil) + costOf('coal', coal) + costOf('garbage', garbage) + costOf('uranium', uranium)} Elektro`
+      confirm: ({ coal, oil, garbage, uranium }) => (
+        `Pay ${costOf('coal', coal) + costOf('oil', oil) + costOf('garbage', garbage) + costOf('uranium', uranium)} Elektro`
       )
-    }).do(({ oil, coal, garbage, uranium }) => {
-      player.elektro -= costOf('oil', oil) + costOf('coal', coal) + costOf('garbage', garbage) + costOf('uranium', uranium);
-      if (oil) for (const resource of resources.firstN(oil, Resource, {type: 'oil'})) {
-        resource.putInto(board.all(Card, {mine: true}).find(card => card.spaceFor('oil') > 0)!)
+    }).do(amounts => {
+      const cards = board.all(Card, {mine: true});
+      let cost = 0;
+      for (const type of resourceTypes) {
+        cost += costOf(type, amounts[type]);
+        for (const resource of resources.firstN(amounts[type], Resource, {type})) {
+          if (amounts[type]) resource.putInto(
+            cards.find(card => card.spaceFor(type) > 0 && !card.resourcesAvailableToPower()) ||
+              cards.find(card => card.spaceFor(type) > 0)!
+          )
+        }
       }
-      if (coal) for (const resource of resources.firstN(coal, Resource, {type: 'coal'})) {
-        resource.putInto(board.all(Card, {mine: true}).find(card => card.spaceFor('coal') > 0)!)
-      }
-      if (garbage) for (const resource of resources.firstN(garbage, Resource, {type: 'garbage'})) {
-        resource.putInto(board.all(Card, {mine: true}).find(card => card.spaceFor('garbage') > 0)!)
-      }
-      if (uranium) for (const resource of resources.firstN(uranium, Resource, {type: 'uranium'})) {
-        resource.putInto(board.all(Card, {mine: true}).find(card => card.spaceFor('uranium') > 0)!)
-      }
+      player.elektro -= cost;
     })
-
-    // buyResource: action({
-    //   prompt: 'Buy resources'
-    // }).chooseFrom(
-    //   'type',
-    //   resourceTypes.filter(type => (
-    //     costOf(type, 1) <= player.elektro && cards.find(card => card.spaceFor(type) > 0)
-    //   ))
-    // ).choose(
-    //   'amount', 'number', {
-    //     confirm: ({ type, amount }) => `Buy ${amount} ${type} for ${costOf(type, amount)} Elektro?`,
-    //     validate: ({ type, amount }) => {
-    //       if (amount > resources.all(Resource, {type}).length) return `Not enough ${type}`;
-    //       if (costOf(type, amount) > player.elektro) return `Not enough Elektro`;
-    //       if (amount > cards.sum(card => card.spaceFor(type))) return `Not enough space`;
-    //     }
-    //   }
-    // ).do(({ type, amount, choice, choice2, amount2, pieces }) => {
-    //   player.elektro -= costOf(type, amount);
-    //   for (const resource of resources.firstN(amount, Resource, {type})) {
-    //     resource.putInto(cards.first(Card, card => card.spaceFor(resource.type) > 0)!)
-    //   }
-    // })
   });
 
   board.defineFlow(() => {
