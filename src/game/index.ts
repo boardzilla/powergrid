@@ -352,6 +352,7 @@ export default createGame(PowergridPlayer, PowergridBoard, board => {
     powerplants.sortBy<Card>('cost');
     const discount = powerplants.first(Card, { discount: true });
     if (discount && powerplants.first(Card) !== discount) {
+      board.message('Removing discount because of a lower power plant');
       powerplants.first(Card)!.remove();
       discount.discount = false;
       deck.top(Card)?.putInto(powerplants);
@@ -550,10 +551,10 @@ export default createGame(PowergridPlayer, PowergridBoard, board => {
         max: board.all(Card, {mine: true}).sum(card => card.spaceFor('uranium')),
       }],
     }, {
-      validate: ({ coal, oil, garbage, uranium }) => (
-        coal + oil + garbage + uranium > 0 &&
-          costOf('coal', coal) + costOf('oil', oil) + costOf('garbage', garbage) + costOf('uranium', uranium) <= player.elektro
-      ),
+      validate: ({ coal, oil, garbage, uranium }) => {
+        if (coal + oil + garbage + uranium === 0) return 'Cannot purchase zero';
+        if (costOf('coal', coal) + costOf('oil', oil) + costOf('garbage', garbage) + costOf('uranium', uranium) > player.elektro) return 'Insufficient Elektro';
+      },
       confirm: ({ coal, oil, garbage, uranium }) => (
         `Pay ${costOf('coal', coal) + costOf('oil', oil) + costOf('garbage', garbage) + costOf('uranium', uranium)} Elektro`
       )
