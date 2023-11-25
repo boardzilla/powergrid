@@ -1,7 +1,7 @@
 @import url(https://db.onlinewebfonts.com/c/69dbc1186412d7831b88d8a78a360360?family=DIN+Condensed+Web);
 
-@media (prefers-color-scheme: dark) {
-  body {
+body {
+  html.dark & {
     background: #335;
   }
 }
@@ -51,17 +51,17 @@
       height: 100%;
       position: absolute;
       left: -5%;
-      @media (prefers-color-scheme: dark) {
+      html.dark & {
         filter: brightness(.7);
       }
     }
     circle {
-      @media (prefers-color-scheme: dark) {
+      html.dark & {
         fill: #aaf;
       }
     }
     line.inner {
-      @media (prefers-color-scheme: dark) {
+      html.dark & {
         stroke: #ccf;
       }
     }
@@ -148,14 +148,14 @@
     &.empty {
       color: black;
     }
-    @media (prefers-color-scheme: dark) {
+    html.dark & {
       color: black;
     }
   }
 
   .Resource {
     background: none;
-    @media (prefers-color-scheme: dark) {
+    html.dark & {
       filter: invert(.6);
     }
   }
@@ -313,7 +313,7 @@
       top: 50%;
       position: absolute;
       left: 2%;
-      @media (prefers-color-scheme: dark) {
+      html.dark & {
         filter: invert(1);
       }
     }
