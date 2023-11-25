@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@boardzilla/core@^0.0.15":
-  version "0.0.15"
-  resolved "https://registry.yarnpkg.com/@boardzilla/core/-/core-0.0.15.tgz#439382a4e5373116f82d0c748d2a870c497199f3"
-  integrity sha512-2ZmjKWX/P8Tleu0REmoF4axgkwR3FXndznQwGU0TFsNAQ+sTk9GfoHBXGJa57xoe/zaoG8HBiOPFWE3rlJKqUA==
+"@boardzilla/core@^0.0.26":
+  version "0.0.26"
+  resolved "https://registry.yarnpkg.com/@boardzilla/core/-/core-0.0.26.tgz#55f3795301bb4e04fb9bef35dd84b17a415c62f9"
+  integrity sha512-2YYTLmDpzimompoKhF+q403hq/FKAPIn/18O3w6yBBLpIc5bPsdz9samyviQKPk/xrmclJN14FFk3t0AJkgbSg==
   dependencies:
     classnames "^2.3.1"
     graphology "^0.25.4"
@@ -247,9 +247,9 @@ bcrypt-pbkdf@^1.0.0:
     tweetnacl "^0.14.3"
 
 big-integer@^1.6.17:
-  version "1.6.51"
-  resolved "https://registry.yarnpkg.com/big-integer/-/big-integer-1.6.51.tgz#0df92a5d9880560d3ff2d5fd20245c889d130686"
-  integrity sha512-GPEid2Y9QU1Exl1rpO9B2IPJGHPSupF5GnVIP0blYvNOMer2bTvSWs1jGOUg04hTmu67nmLsQ9TBo1puaotBHg==
+  version "1.6.52"
+  resolved "https://registry.yarnpkg.com/big-integer/-/big-integer-1.6.52.tgz#60a887f3047614a8e1bffe5d7173490a97dc8c85"
+  integrity sha512-QxD8cf2eVqJOOz63z6JIN9BzvVs/dlySa5HGSBH5xtR8dPteIRQnBxxKqkNTiT6jbDTF6jAfrd4oMcND9RGbQg==
 
 binary-extensions@^2.0.0:
   version "2.2.0"

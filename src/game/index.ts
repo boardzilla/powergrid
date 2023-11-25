@@ -10,6 +10,7 @@ import {
   Player,
   playerActions,
   ifElse,
+  loop,
   whileLoop,
   eachPlayer,
   Do,
@@ -49,13 +50,13 @@ export class PowergridBoard extends Board {
     if (powerplants.has('step-3')) advanceToStep3 = true;
 
     if (advanceToStep2) {
-      this.message('Now in step 2');
+      this.game.message('Now in step 2');
       this.step = 2;
       powerplants.first(Card)?.remove();
       this.first('deck')!.top(Card)?.putInto(powerplants);
     }
     if (advanceToStep3) {
-      this.message('Now in step 3');
+      this.game.message('Now in step 3');
       this.step = 3;
     }
   }
@@ -190,7 +191,10 @@ const refill = {
 const income = [10, 22, 33, 44, 54, 64, 73, 82, 90, 98, 105, 112, 118, 124, 129, 134, 138, 142, 145, 148, 150];
 const victory = [18, 17, 17, 15, 14];
 
-export default createGame(PowergridPlayer, PowergridBoard, board => {
+export default createGame(PowergridPlayer, PowergridBoard, game => {
+
+  const { board, action } = game;
+
   board.registerClasses(
     Card,
     Resource,
@@ -352,7 +356,7 @@ export default createGame(PowergridPlayer, PowergridBoard, board => {
     powerplants.sortBy<Card>('cost');
     const discount = powerplants.first(Card, { discount: true });
     if (discount && powerplants.first(Card) !== discount) {
-      board.message('Removing discount because of a lower power plant');
+      game.message('Removing discount because of a lower power plant');
       powerplants.first(Card)!.remove();
       discount.discount = false;
       deck.top(Card)?.putInto(powerplants);
@@ -411,9 +415,7 @@ export default createGame(PowergridPlayer, PowergridBoard, board => {
     return resources.firstN(amount, resource).sum(resource => resource.container(ResourceSpace)!.cost)
   };
 
-  const action = board.action;
-
-  board.defineActions({
+  game.defineActions({
     selectZone: () => action({
       prompt: 'Choose playing zone',
     }).chooseOnBoard(
@@ -574,183 +576,172 @@ export default createGame(PowergridPlayer, PowergridBoard, board => {
     })
   });
 
-  board.defineFlow(() => {
-    return whileLoop({
-      while: true,
-      do: [
-        whileLoop({
-          while: () => board.zones.length < Math.min(5, Math.max(3, board.players.length)),
-          do: playerActions({
-            name: 'selectZone',
-            player: board.players.host(),
-            actions: { selectZone: null }
-          }),
-        }),
-        () => {
-          board.players.sortBy('score', 'desc'); // and powerplants
-          board.phase = 'auction';
-          board.turn += 1;
-          for (const player of board.players) player.havePassedAuctionPhase = false;
-          powerplants.first(Card)!.discount = true;
-        },
-        eachPlayer({
-          name: 'auctionPlayer',
-          startingPlayer: () => board.players[0],
-          continueUntil: () => board.players.every(p => p.havePassedAuctionPhase),
-          do: ifElse({
-            name: 'mayAuction',
-            if: ({ auctionPlayer }) => !auctionPlayer.havePassedAuctionPhase,
-            do: playerActions({
-              name: 'auction',
-              actions: {
-                auction: [
-                  ({ auctionPlayer }) => {
-                    for (const player of board.players) player.passedThisAuction = player.havePassedAuctionPhase;
-                    board.playerWithHighestBid = auctionPlayer;
-                  },
+  game.defineFlow(loop([
+    whileLoop({
+      while: () => board.zones.length < Math.min(5, Math.max(3, board.players.length)),
+      do: playerActions({
+        name: 'selectZone',
+        player: board.players.host(),
+        actions: { selectZone: null }
+      }),
+    }),
+    () => {
+      board.players.sortBy('score', 'desc'); // and powerplants
+      board.phase = 'auction';
+      board.turn += 1;
+      for (const player of board.players) player.havePassedAuctionPhase = false;
+      powerplants.first(Card)!.discount = true;
+    },
+    eachPlayer({
+      name: 'auctionPlayer',
+      startingPlayer: () => board.players[0],
+      continueUntil: () => board.players.every(p => p.havePassedAuctionPhase),
+      do: ifElse({
+        name: 'mayAuction',
+        if: ({ auctionPlayer }) => !auctionPlayer.havePassedAuctionPhase,
+        do: playerActions({
+          name: 'auction',
+          actions: {
+            auction: [
+              ({ auctionPlayer }) => {
+                for (const player of board.players) player.passedThisAuction = player.havePassedAuctionPhase;
+                board.playerWithHighestBid = auctionPlayer;
+              },
 
-                  eachPlayer({
-                    name: 'biddingPlayer',
-                    startingPlayer: ({ auctionPlayer }) => auctionPlayer,
-                    continueUntil: () => board.lastBid !== undefined && board.players.filter(p => !p.passedThisAuction).length === 1,
-                    do: ifElse({
-                      if: ({ biddingPlayer }) => !biddingPlayer.passedThisAuction,
-                      do: playerActions({ name: 'bid', actions: { bid: null, passBid: null } })
-                    }),
-                  }),
-
-                  ifElse({
-                    if: () => board.first(PlayerMat, { player: board.playerWithHighestBid! })!.all(Card).length >= 3,
-                    do: playerActions({
-                      player: () => board.playerWithHighestBid!,
-                      name: 'scrap',
-                      actions: { scrap: null }
-                    }),
-                  }),
-
-                  ({ auctionPlayer }) => {
-                    const winner = board.playerWithHighestBid!;
-                    board.message(`${winner} won the bid with ${board.lastBid}`);
-                    winner.elektro -= board.lastBid!;
-                    board.lastBid = undefined;
-                    powerplants.first(Card, {auction: true})!.putInto(board.first(PlayerMat, {player: winner})!);
-                    deck.top(Card)?.putInto(powerplants);
-                    winner.havePassedAuctionPhase = true;
-                    if (winner !== auctionPlayer) return Do.repeat;
-                  },
-                ],
-                passAuction: null
-              }
-            })
-          })
-        }),
-
-        () => {
-          board.players.sortBy('score', 'asc');
-          board.phase = 'resources';
-          const discount = powerplants.first(Card, { discount: true });
-          if (discount) {
-            discount.remove();
-            deck.top(Card)?.putInto(powerplants);
-          }
-        },
-
-        eachPlayer({
-          name: 'purchasePlayer',
-          do: playerActions({
-            name: 'purchaseResources',
-            actions: {
-              buyResource: Do.repeat,
-              pass: null
-            }
-          }),
-        }),
-
-        () => { board.phase = 'build' },
-
-        eachPlayer({
-          name: 'buildPlayer',
-          do: playerActions({
-            name: 'build',
-            skipIfOnlyOne: true,
-            actions: {
-              build: Do.repeat,
-              pass: null
-            }
-          }),
-        }),
-
-        () => {
-          board.phase = 'power';
-          if (board.players.max('score') >= victory[board.players.length - 2]) {
-            board.message("Final power phase!");
-          }
-        },
-
-        eachPlayer({
-          name: 'powerPlayer',
-          do: [
-            whileLoop({
-              while: true,
-              do: playerActions({
-                name: 'arrange',
-                actions: {
-                  arrangeResources: Do.repeat,
-                  pass: Do.break
-                }
+              eachPlayer({
+                name: 'biddingPlayer',
+                startingPlayer: ({ auctionPlayer }) => auctionPlayer,
+                continueUntil: () => board.lastBid !== undefined && board.players.filter(p => !p.passedThisAuction).length === 1,
+                do: ifElse({
+                  if: ({ biddingPlayer }) => !biddingPlayer.passedThisAuction,
+                  do: playerActions({ name: 'bid', actions: { bid: null, passBid: null } })
+                }),
               }),
-            }),
-            whileLoop({
-              while: true,
-              do: playerActions({
-                name: 'power',
-                actions: {
-                  power: Do.repeat,
-                  pass: Do.break
-                }
-              })
-            }),
-            ({ powerPlayer }) => {
-              // count power from plants and number of cities that can be powered
-              powerPlayer.cities = Math.min(
-                map.all(Building, { mine: true, powered: true }).length,
-                income.length - 1,
-              )
-              // unpower cities
-              for (const building of map.all(Building, { mine: true, powered: true })) building.powered = false;
 
-              if (board.players.max('score') < victory[board.players.length - 2]) {
-                const rev = income[powerPlayer.cities];
-                powerPlayer.elektro += rev;
-                board.message(`${powerPlayer} earned ${rev} elektro for ${powerPlayer.cities} ${powerPlayer.cities === 1 ? 'city' : 'cities'}`);
+              ifElse({
+                if: () => board.first(PlayerMat, { player: board.playerWithHighestBid! })!.all(Card).length >= 3,
+                do: playerActions({
+                  player: () => board.playerWithHighestBid!,
+                  name: 'scrap',
+                  actions: { scrap: null }
+                }),
+              }),
 
-                // unpower plants
-                powerPlayer.cities = 0;
-                for (const card of board.all(Card, { mine: true, powered: true })) {
-                  card.powered = false;
-                }
-              }
-            },
-          ]
-        }),
-        () => {
-          if (board.players.max('score') >= victory[board.players.length - 2]) {
-            const winner = board.players.withHighest('cities', 'elektro');
-            board.message(`${winner} wins with ${winner.cities} cities!`)
-            board.finish(winner);
-          } else {
-            for (const r of resourceTypes) {
-              board.refillResources(r, refill[r][board.players.length - 1][board.step - 1]);
-            }
-            if (board.step === 3) {
-              powerplants.first(Card)?.remove();
-            } else {
-              powerplants.last(Card)?.putInto(deck, {fromBottom: 0});
-            }
-            deck.top(Card)?.putInto(powerplants);
+              ({ auctionPlayer }) => {
+                const winner = board.playerWithHighestBid!;
+                game.message(`${winner} won the bid with ${board.lastBid}`);
+                winner.elektro -= board.lastBid!;
+                board.lastBid = undefined;
+                powerplants.first(Card, {auction: true})!.putInto(board.first(PlayerMat, {player: winner})!);
+                deck.top(Card)?.putInto(powerplants);
+                winner.havePassedAuctionPhase = true;
+                if (winner !== auctionPlayer) return Do.repeat;
+              },
+            ],
+            passAuction: null
           }
+        })
+      })
+    }),
+
+    () => {
+      board.players.sortBy('score', 'asc');
+      board.phase = 'resources';
+      const discount = powerplants.first(Card, { discount: true });
+      if (discount) {
+        discount.remove();
+        deck.top(Card)?.putInto(powerplants);
+      }
+    },
+
+    eachPlayer({
+      name: 'purchasePlayer',
+      do: playerActions({
+        name: 'purchaseResources',
+        actions: {
+          buyResource: Do.repeat,
+          pass: null
         }
+      }),
+    }),
+
+    () => { board.phase = 'build' },
+
+    eachPlayer({
+      name: 'buildPlayer',
+      do: playerActions({
+        name: 'build',
+        skipIfOnlyOne: true,
+        actions: {
+          build: Do.repeat,
+          pass: null
+        }
+      }),
+    }),
+
+    () => {
+      board.phase = 'power';
+      if (board.players.max('score') >= victory[board.players.length - 2]) {
+        game.message("Final power phase!");
+      }
+    },
+
+    eachPlayer({
+      name: 'powerPlayer',
+      do: [
+        loop(playerActions({
+          name: 'arrange',
+          actions: {
+            arrangeResources: Do.repeat,
+            pass: Do.break
+          }
+        })),
+        loop(playerActions({
+          name: 'power',
+          actions: {
+            power: Do.repeat,
+            pass: Do.break
+          }
+        })),
+        ({ powerPlayer }) => {
+          // count power from plants and number of cities that can be powered
+          powerPlayer.cities = Math.min(
+            map.all(Building, { mine: true, powered: true }).length,
+            income.length - 1,
+          )
+          // unpower cities
+          for (const building of map.all(Building, { mine: true, powered: true })) building.powered = false;
+
+          if (board.players.max('score') < victory[board.players.length - 2]) {
+            const rev = income[powerPlayer.cities];
+            powerPlayer.elektro += rev;
+            game.message(`${powerPlayer} earned ${rev} elektro for ${powerPlayer.cities} ${powerPlayer.cities === 1 ? 'city' : 'cities'}`);
+
+            // unpower plants
+            powerPlayer.cities = 0;
+            for (const card of board.all(Card, { mine: true, powered: true })) {
+              card.powered = false;
+            }
+          }
+        },
       ]
-    });
-  });
+    }),
+    () => {
+      if (board.players.max('score') >= victory[board.players.length - 2]) {
+        const winner = board.players.withHighest('cities', 'elektro');
+        game.message(`${winner} wins with ${winner.cities} cities!`)
+        game.finish(winner);
+      } else {
+        for (const r of resourceTypes) {
+          board.refillResources(r, refill[r][board.players.length - 1][board.step - 1]);
+        }
+        if (board.step === 3) {
+          powerplants.first(Card)?.remove();
+        } else {
+          powerplants.last(Card)?.putInto(deck, {fromBottom: 0});
+        }
+        deck.top(Card)?.putInto(powerplants);
+      }
+    }
+  ]))
 });

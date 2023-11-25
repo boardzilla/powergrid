@@ -183,6 +183,10 @@
         background: #cc0;
       }
     }
+    &[data-auction=true] {
+      transform: scale(1.25);
+      z-index: 10;
+    }
     > div.outer {
       border-radius: 7%;
       border: .1em solid black;
