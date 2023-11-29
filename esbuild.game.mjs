@@ -9,6 +9,7 @@ await esbuild.build({
   globalName: 'game',
   loader: {
     '.png': 'file',
+    '.jpg': 'file',
     '.svg': 'file',
     '.scss': 'css',
     '.ogg': 'dataurl'

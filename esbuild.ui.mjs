@@ -9,6 +9,7 @@ await esbuild.build({
   assetNames: 'assets/[name]-[hash]',
   loader: {
     '.png': 'file',
+    '.jpg': 'file',
     '.svg': 'file',
     '.scss': 'css',
     '.ogg': 'dataurl',

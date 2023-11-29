@@ -5,9 +5,9 @@
 
 import {
   createGame,
-  createBoardClass,
   createBoardClasses,
   Player,
+  Board,
   playerActions,
   ifElse,
   loop,
@@ -19,7 +19,7 @@ import {
 
 import { cards } from './cards.js';
 
-export class PowergridPlayer extends Player {
+export class PowergridPlayer extends Player<PowergridPlayer, PowergridBoard> {
   score: number = 0;
   elektro: number = 50;
   cities: number = 0;
@@ -27,12 +27,10 @@ export class PowergridPlayer extends Player {
   havePassedAuctionPhase: boolean = false;
 };
 
-const Board = createBoardClass(PowergridPlayer);
-
 type ResourceType = 'coal' | 'oil' | 'garbage' | 'uranium'
 const resourceTypes: ResourceType[] = ['coal', 'oil', 'garbage', 'uranium'];
 
-export class PowergridBoard extends Board {
+export class PowergridBoard extends Board<PowergridPlayer, PowergridBoard> {
   step: number = 1;
   phase: 'auction' | 'resources' | 'build' | 'power' = 'auction';
   turn: number = 0;
@@ -86,7 +84,7 @@ export class PowergridBoard extends Board {
   }
 }
 
-const {Space, Piece} = createBoardClasses(PowergridBoard);
+const {Space, Piece} = createBoardClasses<PowergridPlayer, PowergridBoard>();
 
 export {Space};
 
@@ -423,7 +421,9 @@ export default createGame(PowergridPlayer, PowergridBoard, game => {
         !board.zones.includes(c.zone) &&
           c.adjacencies(City, z => board.zones.includes(z.zone)).length > 0
       )).map(c => c.zone).includes(city.zone))
-    ).do(({ city }) => board.zones.push(city.zone)),
+    ).do(
+      ({ city }) => { board.zones.push(city.zone) }
+    ),
 
     auction: () => action({
       prompt: 'Choose a factory for auction',
@@ -431,7 +431,7 @@ export default createGame(PowergridPlayer, PowergridBoard, game => {
     }).chooseOnBoard(
       'card', powerplants.firstN(board.step === 3 ? 8 : 4, Card)
     ).do(
-      ({ card }) => card.auction = true
+      ({ card }) => { card.auction = true }
     ).message(
       `{{player}} put {{card}} up for auction`
     ),
@@ -453,14 +453,14 @@ export default createGame(PowergridPlayer, PowergridBoard, game => {
       prompt: 'Pass this auction',
       condition: board.turn > 1
     }).do(
-      () => player.havePassedAuctionPhase = true
+      () => { player.havePassedAuctionPhase = true }
     ),
 
     passBid: player => action({
       prompt: 'Pass',
       condition: board.lastBid !== undefined
     }).do(
-      () => player.passedThisAuction = true
+      () => { player.passedThisAuction = true }
     ),
 
     scrap: player => action({
@@ -485,7 +485,10 @@ export default createGame(PowergridPlayer, PowergridBoard, game => {
       'building', board.first(PlayerMat, { player })!.first(Building)!,
       'city', map.all(City, city => city.canBuildFor(player.elektro)),
       {
-        confirm: ({ city }) => `Build ${city.name} for ${city.costToBuild()} Elektro`
+        confirm: [
+          `Build {{city}} for {{cost}} Elektro`,
+          ({ city }) => ({ cost: city.costToBuild() })
+        ]
       }
     ).do(({ city }) => {
       player.elektro -= city.costToBuild();
@@ -557,9 +560,10 @@ export default createGame(PowergridPlayer, PowergridBoard, game => {
         if (coal + oil + garbage + uranium === 0) return 'Cannot purchase zero';
         if (costOf('coal', coal) + costOf('oil', oil) + costOf('garbage', garbage) + costOf('uranium', uranium) > player.elektro) return 'Insufficient Elektro';
       },
-      confirm: ({ coal, oil, garbage, uranium }) => (
-        `Pay ${costOf('coal', coal) + costOf('oil', oil) + costOf('garbage', garbage) + costOf('uranium', uranium)} Elektro`
-      )
+      confirm: [
+        `Pay {{cost}} Elektro`,
+        ({ coal, oil, garbage, uranium }) => ({ cost: costOf('coal', coal) + costOf('oil', oil) + costOf('garbage', garbage) + costOf('uranium', uranium) })
+      ]
     }).do(amounts => {
       const cards = board.all(Card, {mine: true});
       let cost = 0;
@@ -582,7 +586,7 @@ export default createGame(PowergridPlayer, PowergridBoard, game => {
       do: playerActions({
         name: 'selectZone',
         player: board.players.host(),
-        actions: { selectZone: null }
+        actions: ['selectZone']
       }),
     }),
     () => {
@@ -601,45 +605,48 @@ export default createGame(PowergridPlayer, PowergridBoard, game => {
         if: ({ auctionPlayer }) => !auctionPlayer.havePassedAuctionPhase,
         do: playerActions({
           name: 'auction',
-          actions: {
-            auction: [
-              ({ auctionPlayer }) => {
-                for (const player of board.players) player.passedThisAuction = player.havePassedAuctionPhase;
-                board.playerWithHighestBid = auctionPlayer;
-              },
+          actions: [
+            {
+              name: 'auction',
+              do: [
+                ({ auctionPlayer }) => {
+                  for (const player of board.players) player.passedThisAuction = player.havePassedAuctionPhase;
+                  board.playerWithHighestBid = auctionPlayer;
+                },
 
-              eachPlayer({
-                name: 'biddingPlayer',
-                startingPlayer: ({ auctionPlayer }) => auctionPlayer,
-                continueUntil: () => board.lastBid !== undefined && board.players.filter(p => !p.passedThisAuction).length === 1,
-                do: ifElse({
-                  if: ({ biddingPlayer }) => !biddingPlayer.passedThisAuction,
-                  do: playerActions({ name: 'bid', actions: { bid: null, passBid: null } })
+                eachPlayer({
+                  name: 'biddingPlayer',
+                  startingPlayer: ({ auctionPlayer }) => auctionPlayer,
+                  continueUntil: () => board.lastBid !== undefined && board.players.filter(p => !p.passedThisAuction).length === 1,
+                  do: ifElse({
+                    if: ({ biddingPlayer }) => !biddingPlayer.passedThisAuction,
+                    do: playerActions({ name: 'bid', actions: ['bid', 'passBid'] })
+                  }),
                 }),
-              }),
 
-              ifElse({
-                if: () => board.first(PlayerMat, { player: board.playerWithHighestBid! })!.all(Card).length >= 3,
-                do: playerActions({
-                  player: () => board.playerWithHighestBid!,
-                  name: 'scrap',
-                  actions: { scrap: null }
+                ifElse({
+                  if: () => board.first(PlayerMat, { player: board.playerWithHighestBid! })!.all(Card).length >= 3,
+                  do: playerActions({
+                    player: () => board.playerWithHighestBid!,
+                    name: 'scrap',
+                    actions: ['scrap']
+                  }),
                 }),
-              }),
 
-              ({ auctionPlayer }) => {
-                const winner = board.playerWithHighestBid!;
-                game.message(`${winner} won the bid with ${board.lastBid}`);
-                winner.elektro -= board.lastBid!;
-                board.lastBid = undefined;
-                powerplants.first(Card, {auction: true})!.putInto(board.first(PlayerMat, {player: winner})!);
-                deck.top(Card)?.putInto(powerplants);
-                winner.havePassedAuctionPhase = true;
-                if (winner !== auctionPlayer) return Do.repeat;
-              },
-            ],
-            passAuction: null
-          }
+                ({ auctionPlayer }) => {
+                  const winner = board.playerWithHighestBid!;
+                  game.message(`${winner} won the bid with ${board.lastBid}`);
+                  winner.elektro -= board.lastBid!;
+                  board.lastBid = undefined;
+                  powerplants.first(Card, {auction: true})!.putInto(board.first(PlayerMat, {player: winner})!);
+                  deck.top(Card)?.putInto(powerplants);
+                  winner.havePassedAuctionPhase = true;
+                  if (winner !== auctionPlayer) return Do.repeat;
+                },
+              ],
+            },
+            'passAuction'
+          ]
         })
       })
     }),
@@ -658,10 +665,10 @@ export default createGame(PowergridPlayer, PowergridBoard, game => {
       name: 'purchasePlayer',
       do: playerActions({
         name: 'purchaseResources',
-        actions: {
-          buyResource: Do.repeat,
-          pass: null
-        }
+        actions: [
+          { name: 'buyResource', do: Do.repeat },
+          'pass'
+        ]
       }),
     }),
 
@@ -672,10 +679,10 @@ export default createGame(PowergridPlayer, PowergridBoard, game => {
       do: playerActions({
         name: 'build',
         skipIfOnlyOne: true,
-        actions: {
-          build: Do.repeat,
-          pass: null
-        }
+        actions: [
+          { name: 'build', do: Do.repeat },
+          'pass'
+        ]
       }),
     }),
 
@@ -691,17 +698,17 @@ export default createGame(PowergridPlayer, PowergridBoard, game => {
       do: [
         loop(playerActions({
           name: 'arrange',
-          actions: {
-            arrangeResources: Do.repeat,
-            pass: Do.break
-          }
+          actions: [
+            { name: 'arrangeResources', do: Do.repeat },
+            { name: 'pass', do: Do.break }
+          ]
         })),
         loop(playerActions({
           name: 'power',
-          actions: {
-            power: Do.repeat,
-            pass: Do.break
-          }
+          actions: [
+            { name: 'power', do: Do.repeat },
+            { name: 'pass', do: Do.break }
+          ]
         })),
         ({ powerPlayer }) => {
           // count power from plants and number of cities that can be powered
