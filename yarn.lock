@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@boardzilla/core@~0.0.26":
-  version "0.0.31"
-  resolved "https://registry.yarnpkg.com/@boardzilla/core/-/core-0.0.31.tgz#1d86313ddc85442cd3eb4e4719b6e33c56502f69"
-  integrity sha512-25MBWtfs/lBZp5rSGGYc60qQgrNDwOzXZx/XcnU4UK4hdA8lmrB/uT5mLyhTGD2eohqLBoHnrId8aLSq5Wh9Tw==
+"@boardzilla/core@^0.0.37":
+  version "0.0.37"
+  resolved "https://registry.yarnpkg.com/@boardzilla/core/-/core-0.0.37.tgz#8c7f7780c1f07b7c8e445187523ea6c79cd18f30"
+  integrity sha512-3Zv/pg0tk79M2gKPQF2+fEzkPHYwqFBR3HVon8/WX7cW72sQJAXI4Aczhb/4ucdkBPuD45WpMwBHPAIx3xI+Bg==
   dependencies:
     classnames "^2.3.1"
     graphology "^0.25.4"
@@ -19,7 +19,7 @@
     react-draggable "^4.4.5"
     zustand "^4.4.0"
 
-"@boardzilla/devtools@~0.0.21":
+"@boardzilla/devtools@^0.0.38":
   version "0.0.38"
   resolved "https://registry.yarnpkg.com/@boardzilla/devtools/-/devtools-0.0.38.tgz#e5a9d4ce8b93d386493e661622d3066e2e1d95a6"
   integrity sha512-O95Rh43YV4SDsKBiMj4Npp3nZ/COnlCS3huaChuloETE79jUPoKeuo/ziTtEBvrv93GEiwWs8gE8VjgWuiKWlw==

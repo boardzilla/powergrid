@@ -1,4 +1,7 @@
-@import url(https://db.onlinewebfonts.com/c/69dbc1186412d7831b88d8a78a360360?family=DIN+Condensed+Web);
+@font-face {
+  font-family: "Din Condensed Web";
+  src: url('https://fontlibrary.org/assets/fonts/d-din/04e53ae1158e3d7d61a4cb843c18b0e4/b9f08331b2af58461f6b30f8de66d9e3/DDINCondensedBold.ttf');
+}
 
 body {
   html.dark & {
