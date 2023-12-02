@@ -12,10 +12,16 @@ body {
 #game {
   font-family: 'Din Condensed Web';
   font-size: 8%;
-  background: #ccf;
+}
+
+#setup {
+  font-size: 1rem;
+  background: none;
 }
 
 #play-area {
+  background: #ccf;
+
   #step-phase {
     font-size: .35em;
     text-align: center;
