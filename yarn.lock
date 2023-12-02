@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@boardzilla/core@^0.0.37":
-  version "0.0.37"
-  resolved "https://registry.yarnpkg.com/@boardzilla/core/-/core-0.0.37.tgz#8c7f7780c1f07b7c8e445187523ea6c79cd18f30"
-  integrity sha512-3Zv/pg0tk79M2gKPQF2+fEzkPHYwqFBR3HVon8/WX7cW72sQJAXI4Aczhb/4ucdkBPuD45WpMwBHPAIx3xI+Bg==
+"@boardzilla/core@^0.0.38":
+  version "0.0.38"
+  resolved "https://registry.yarnpkg.com/@boardzilla/core/-/core-0.0.38.tgz#1ed04517c2ff077f2de6d20d0b83234cbaac9ad8"
+  integrity sha512-cP4N1KKMZ/dCKc7JIZ1aijwtVBDB24lZrmME1X/GfQRc8q3YznbknstSTHCT62JebeaRA5MqDrDBoqAaH4x2GQ==
   dependencies:
     classnames "^2.3.1"
     graphology "^0.25.4"

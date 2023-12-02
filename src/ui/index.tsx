@@ -17,6 +17,7 @@ import {
 } from '../game/index.js';
 
 import './style.scss';
+import '@boardzilla/core/index.css';
 
 import ElektroSVG from './components/elektro-svg.js';
 import LightningSVG from './components/lightning-svg.js';
