@@ -38,7 +38,11 @@ import garbageOutline from './assets/garbage-outline.svg';
 import uraniumOutline from './assets/uranium-outline.svg';
 import hybridOutline from './assets/hybrid-outline.svg';
 import arrow from './assets/arrow.svg';
-import powerplant from './assets/powerplant.svg';
+import powerplantOil from './assets/powerplant-oil.svg';
+import powerplantCoal from './assets/powerplant-coal.svg';
+import powerplantUranium from './assets/powerplant-uranium.svg';
+import powerplantClean from './assets/powerplant-clean.svg';
+import powerplantGarbage from './assets/powerplant-garbage.svg';
 import PowerLabelSVG from './components/power-label-svg.js';
 import socket from './assets/socket.svg';
 
@@ -347,7 +351,11 @@ render(setup, {
         <div className={`outer ${card.resourcesAvailableToPower() && card.container(PlayerMat) ? 'powerable' : ''}`}>
           {card.isVisible() && (
             <>
-              <img className="background" src={powerplant}/>
+              {card.resourceType === 'coal' && <img className="background" src={powerplantCoal}/>}
+              {(card.resourceType === 'oil' || card.resourceType === 'hybrid') && <img className="background" src={powerplantOil}/>}
+              {card.resourceType === 'garbage' && <img className="background" src={powerplantGarbage}/>}
+              {card.resourceType === 'uranium' && <img className="background" src={powerplantUranium}/>}
+              {card.resourceType === 'clean' && <img className="background" src={powerplantClean}/>}
               <div className="inner">
                 {card.name === 'step-3' && <div className="step-3">PHASE 3</div>}
                 {card.cost && card.name !== 'step-3' && (

@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+
+<svg
+   width="800px"
+   height="800px"
+   preserveAspectRatio="none"
+   viewBox="0 0 72 72"
+   id="emoji"
+   version="1.1"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs9" />
+  <rect
+     style="fill:#51cbd9;fill-opacity:1;stroke:none;stroke-width:1.296;stroke-linejoin:round;stroke-opacity:1"
+     id="rect10"
+     width="73.031487"
+     height="72.153358"
+     x="-0.73177844"
+     y="-0.29271138" />
+  <path
+     style="fill:#74b775;fill-opacity:1;stroke:none;stroke-width:1.36607;stroke-linejoin:round"
+     d="M -1.451754,46.984861 36.61253,35.418078 73.154241,46.515937 73.763269,74.495048 H -1.7562683 Z"
+     id="path10" />
+  <path
+     fill="#9b9b9a"
+     d="m 70.24,10.5062 a 0.8469,0.8469 0 0 0 -0.17,-0.04 c -0.01,-0.05 -0.03,-0.1 -0.04,-0.14 a 1.68,1.68 0 0 1 0.21,0.18 z"
+     id="path3" />
+  <rect
+     x="51"
+     y="27"
+     width="6"
+     height="39"
+     fill="#ffffff"
+     id="rect3" />
+  <polyline
+     fill="none"
+     stroke="#000000"
+     stroke-linecap="round"
+     stroke-linejoin="round"
+     stroke-width="2"
+     points="53 66 57 66 57 27 51 27 51 49.721"
+     id="polyline8" />
+  <path
+     fill="#3f3f3f"
+     d="M 47,47.2622 V 66 h 6 V 55 a 7.9959,7.9959 0 0 0 -6,-7.7378 z"
+     id="path6"
+     style="fill:#676767;fill-opacity:1" />
+  <path
+     style="fill:#b8b8b8;fill-opacity:1;stroke:#000000;stroke-width:1.98;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
+     d="M 35.234419,2.6885701 31.555323,12.876836 h 7.075184 z"
+     id="path7" />
+  <circle
+     style="fill:#9bd5dc;fill-opacity:1;stroke:none;stroke-width:1.41923;stroke-linejoin:round;stroke-opacity:1"
+     id="circle2"
+     cx="35.637825"
+     cy="21.89794"
+     r="11.660917" />
+  <path
+     id="circle3"
+     style="fill:#55b7c3;stroke-width:1.41923;stroke-linejoin:round;fill-opacity:1"
+     d="m 47.298742,21.89794 c -10e-7,6.440147 -5.22077,11.660917 -11.660917,11.660917 -3.613175,0 -6.842533,-1.643316 -8.981445,-4.223319 9.538089,-1.921227 13.401575,-5.877093 16.797594,-16.091325 2.361116,2.133924 3.844768,5.220563 3.844768,8.653727 z" />
+  <circle
+     style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:1.98;stroke-linejoin:round;stroke-opacity:1;stroke-dasharray:none"
+     id="path1"
+     cx="35.637825"
+     cy="21.89794"
+     r="11.660917" />
+  <path
+     fill="#9b9b9a"
+     d="m 47,46.457242 -5.493945,1.863546 -2.566895,-14.293642 -3.378726,0.38766 c 0,0 -0.255917,-2.246788 -0.208187,-4.265913 L 33,30 v 36 h 14 z"
+     id="path4"
+     style="fill:#acacab;fill-opacity:1" />
+  <path
+     fill="#d0cfce"
+     d="M 33,66 V 30 H 19.676093 L 19.749083,41.088733 11.194315,51.300485 11,66 Z"
+     id="path5"
+     style="fill:#e0e0df;fill-opacity:1" />
+  <rect
+     style="fill:#e1e996;fill-opacity:1;stroke:none;stroke-width:2.7;stroke-linejoin:round;stroke-opacity:1"
+     id="rect1"
+     width="41.935272"
+     height="6.8699417"
+     x="10.877408"
+     y="59.110126" />
+  <rect
+     style="fill:#c6d537;fill-opacity:1;stroke:none;stroke-width:1.8395;stroke-linejoin:round;stroke-opacity:1"
+     id="rect2"
+     width="19.464836"
+     height="6.8699417"
+     x="33.20472"
+     y="59.110126" />
+  <path
+     fill="none"
+     stroke="#000000"
+     stroke-linecap="round"
+     stroke-linejoin="round"
+     stroke-width="2"
+     d="M 44.197,66 H 53 V 55 C 53.000539,48.660852 45.036285,44.910552 41.761924,49.024592 41.869644,49.052837 38.6431,33.374761 38.6431,33.374761"
+     id="path9" />
+  <path
+     fill="none"
+     stroke="#000000"
+     stroke-linecap="round"
+     stroke-linejoin="round"
+     stroke-width="2"
+     d="M 44.1969,66 43.956847,52.200797 35.333553,42.320026 35.428905,30.183805 19.308483,30 19.419943,41.2723 11.182886,51.626099 11,66 Z"
+     id="path8"
+     style="stroke-width:1.99998;stroke-dasharray:none" />
+</svg>
