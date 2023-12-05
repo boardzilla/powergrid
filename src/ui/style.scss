@@ -3,6 +3,23 @@
   src: url('https://fontlibrary.org/assets/fonts/d-din/04e53ae1158e3d7d61a4cb843c18b0e4/b9f08331b2af58461f6b30f8de66d9e3/DDINCondensedBold.ttf');
 }
 
+@keyframes powered {
+  0% {
+    filter: drop-shadow(0px 0px 0 #fc00) drop-shadow(0px 0px 0 #fc00) brightness(1);
+    transform: scale(1);
+  }
+
+  95% {
+    filter: drop-shadow(0px 0px 3em #fc0) drop-shadow(0px 0px 3em #fc0) brightness(4);
+    transform: scale(1.2);
+  }
+
+  100% {
+    filter: drop-shadow(0px 0px 2em #fc0) drop-shadow(0px 0px 2em #fc0) brightness(2.5);
+    transform: scale(1);
+  }
+}
+
 body {
   html.dark & {
     background: #335;
@@ -12,6 +29,7 @@ body {
 #game {
   font-family: 'Din Condensed Web';
   font-size: 8%;
+  overflow: hidden;
 }
 
 #setup {
@@ -139,7 +157,10 @@ body {
     .Building svg {
       filter: drop-shadow(1em 1em 1em black);
     }
-    .Building[data-powered="true"] svg {
+    .Building.newly-powered {
+      animation: powered .5s forwards;
+    }
+    .Building[data-powered="true"] {
       filter: drop-shadow(0px 0px 2em #fc0) drop-shadow(0px 0px 2em #fc0) brightness(2.5);
     }
   }

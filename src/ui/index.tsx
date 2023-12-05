@@ -315,7 +315,14 @@ render(setup, {
       )
     });
 
-    board.all(Building).appearance({ aspectRatio: 1, render: BuildingSVG });
+    board.all(Building).appearance({
+      aspectRatio: 1,
+      render: BuildingSVG,
+      effects: [{
+        attributes: { powered: true },
+        className: 'newly-powered',
+      }]
+    });
     board.all(PlayerMat).all(Building).appearance({ render: false });
 
     deck.appearance({
