@@ -659,6 +659,9 @@ export default createGame(PowergridPlayer, PowergridBoard, game => {
         discount.remove();
         deck.top(Card)?.putInto(powerplants);
       }
+
+      // unpower cities
+      for (const building of map.all(Building, { powered: true })) building.powered = false;
     },
 
     eachPlayer({
@@ -716,19 +719,17 @@ export default createGame(PowergridPlayer, PowergridBoard, game => {
             map.all(Building, { mine: true, powered: true }).length,
             income.length - 1,
           )
-          // unpower cities
-          for (const building of map.all(Building, { mine: true, powered: true })) building.powered = false;
 
           if (board.players.max('score') < victory[board.players.length - 2]) {
             const rev = income[powerPlayer.cities];
             powerPlayer.elektro += rev;
             game.message(`${powerPlayer} earned ${rev} elektro for ${powerPlayer.cities} ${powerPlayer.cities === 1 ? 'city' : 'cities'}`);
+          }
 
-            // unpower plants
-            powerPlayer.cities = 0;
-            for (const card of board.all(Card, { mine: true, powered: true })) {
-              card.powered = false;
-            }
+          powerPlayer.cities = 0;
+          // unpower plants
+          for (const card of board.all(Card, { mine: true, powered: true })) {
+            card.powered = false;
           }
         },
       ]

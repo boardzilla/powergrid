@@ -45,7 +45,7 @@ import socket from './assets/socket.svg';
 render(setup, {
   breakpoints: aspectRatio => aspectRatio < 4 / 5 ? 'vertical' : 'default',
 
-  layout: (board, breakpoint) => {
+  layout: (board, _player, breakpoint) => {
     const map = board.first(Space)!;
     const deck = board.first(Space, 'deck')!;
     const resources = board.first(Space, 'resources')!;
@@ -263,6 +263,7 @@ render(setup, {
             {board.phase === 'build' && <img src={buildingFill}/>}
             {board.phase === 'power' && <img src={socket}/>}
           </div>
+          <div id="sea"/>
           <div id="cover"/>
         </>
       )
@@ -307,7 +308,6 @@ render(setup, {
 
     board.all(City).appearance({
       aspectRatio: 1,
-      zoomable: true,
       render: city => (
         <div className={board.zones.includes(city.zone) ? '' : 'out-of-zone'}>
           {CitySVG(city)}
