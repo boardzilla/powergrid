@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@boardzilla/core@^0.0.41":
-  version "0.0.41"
-  resolved "https://registry.yarnpkg.com/@boardzilla/core/-/core-0.0.41.tgz#029091cc6aac7794f0ceeed3faaea81ffff2f32a"
-  integrity sha512-WPyGkZbyrmMBjpt+j8D5RbGye1IhHQF5ghE8PBV5JFwcikni65lX3VF5DHY/ZKcO0xqPO2JiCzWDOiwtJ854QA==
+"@boardzilla/core@^0.0.42":
+  version "0.0.42"
+  resolved "https://registry.yarnpkg.com/@boardzilla/core/-/core-0.0.42.tgz#78cfffe146f66db9e6198a7044fdf61f920114e6"
+  integrity sha512-J7RTYizHt7+n85ZE4nGIhc51asQrlJT6HJb7Oeq+78rg4jC7kvbF2TpgtAvPJMVI6T20Yhlnbnb3c446ZGA+Jw==
   dependencies:
     classnames "^2.3.1"
     graphology "^0.25.4"
@@ -138,9 +138,9 @@
   integrity sha512-gRaP2sk6hc98N734luX4VpF318l3w+ofrtTu9j5L8EQXF+FzQKV6alCOHMVoJJHvVK/mGbwBXfOL1HETQu9IGQ==
 
 "@floating-ui/core@^1.4.2":
-  version "1.5.1"
-  resolved "https://registry.yarnpkg.com/@floating-ui/core/-/core-1.5.1.tgz#62707d7ec585d0929f882321a1b1f4ea9c680da5"
-  integrity sha512-QgcKYwzcc8vvZ4n/5uklchy8KVdjJwcOeI+HnnTNclJjs2nYsy23DOCf+sSV1kBwD9yDAoVKCkv/gEPzgQU3Pw==
+  version "1.5.2"
+  resolved "https://registry.yarnpkg.com/@floating-ui/core/-/core-1.5.2.tgz#53a0f7a98c550e63134d504f26804f6b83dbc071"
+  integrity sha512-Ii3MrfY/GAIN3OhXNzpCKaLxHQfJF9qvwq/kEJYdqDxeIHa01K8sldugal6TmeeXl+WMvhv9cnVzUTaFFJF09A==
   dependencies:
     "@floating-ui/utils" "^0.1.3"
 

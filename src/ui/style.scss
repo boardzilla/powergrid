@@ -29,7 +29,6 @@ body {
 #game {
   font-family: 'Din Condensed Web';
   font-size: 8%;
-  overflow: hidden;
 }
 
 #setup {
@@ -38,6 +37,7 @@ body {
 }
 
 #play-area {
+  overflow: hidden;
   #step-phase {
     font-size: .35em;
     text-align: center;
@@ -64,7 +64,7 @@ body {
   }
 
   #cover {
-    background: #fff6;
+    background: #fff9;
     width: 50%;
     height: 100%;
     position: absolute;
@@ -111,14 +111,14 @@ body {
   #powerplants {
     .bid {
       position: absolute;
-      left: 1.9%;
+      right: 59.5%;
       top: 6%;
       font-size: 1.25em;
-      padding: 0.2em 1em 0.2em 0.4em;
+      padding: 0.2em 0.4em 0.2em 1em;
       text-align: right;
       color: white;
-      clip-path: polygon(100% 0%, 90% 100%, 0% 100%, 0 0);
-      border-radius: 0.3em 0 0 0.3em;
+      clip-path: polygon(0% 0%, 10% 100%, 100% 100%, 100% 0);
+      border-radius: 0 0.3em 0.3em 0;
     }
   }
 

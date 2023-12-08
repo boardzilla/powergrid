@@ -1,211 +1,211 @@
 import type { Card } from './index.js';
 
 export const cards: Record<string, Partial<Card>> = {
-  "oil-03": {
+  "Oil 3": {
     cost: 3,
     resourceType: 'oil',
     resources: 2,
     power: 1,
   },
-  "oil-07": {
+  "Oil 7": {
     cost: 7,
     resourceType: 'oil',
     resources: 3,
     power: 2,
   },
-  "oil-09": {
+  "Oil 9": {
     cost: 9,
     resourceType: 'oil',
     resources: 1,
     power: 1,
   },
-  "oil-16": {
+  "Oil 16": {
     cost: 16,
     resourceType: 'oil',
     resources: 2,
     power: 3,
   },
-  "oil-26": {
+  "Oil 26": {
     cost: 26,
     resourceType: 'oil',
     resources: 2,
     power: 5,
   },
-  "oil-32": {
+  "Oil 32": {
     cost: 32,
     resourceType: 'oil',
     resources: 3,
     power: 6,
   },
-  "oil-35": {
+  "Oil 35": {
     cost: 35,
     resourceType: 'oil',
     resources: 1,
     power: 5,
   },
-  "oil-40": {
+  "Oil 40": {
     cost: 40,
     resourceType: 'oil',
     resources: 2,
     power: 6,
   },
-  "clean-50": {
+  "Clean 50": {
     cost: 50,
     resourceType: 'clean',
     resources: 0,
     power: 6,
   },
-  "coal-04": {
+  "Coal 4": {
     cost: 4,
     resourceType: 'coal',
     resources: 2,
     power: 1,
   },
-  "coal-08": {
+  "Coal 8": {
     cost: 8,
     resourceType: 'coal',
     resources: 3,
     power: 2,
   },
-  "coal-10": {
+  "Coal 10": {
     cost: 10,
     resourceType: 'coal',
     resources: 2,
     power: 2,
   },
-  "coal-15": {
+  "Coal 15": {
     cost: 15,
     resourceType: 'coal',
     resources: 2,
     power: 3,
   },
-  "coal-20": {
+  "Coal 20": {
     cost: 20,
     resourceType: 'coal',
     resources: 3,
     power: 5,
   },
-  "coal-25": {
+  "Coal 25": {
     cost: 25,
     resourceType: 'coal',
     resources: 2,
     power: 5,
   },
-  "coal-31": {
+  "Coal 31": {
     cost: 31,
     resourceType: 'coal',
     resources: 3,
     power: 6,
   },
-  "coal-36": {
+  "Coal 36": {
     cost: 36,
     resourceType: 'coal',
     resources: 3,
     power: 7,
   },
-  "coal-42": {
+  "Coal 42": {
     cost: 42,
     resourceType: 'coal',
     resources: 2,
     power: 6,
   },
-  "garbage-06": {
+  "Garbage 6": {
     cost: 6,
     resourceType: 'garbage',
     resources: 1,
     power: 1,
   },
-  "garbage-14": {
+  "Garbage 14": {
     cost: 14,
     resourceType: 'garbage',
     resources: 2,
     power: 2,
   },
-  "garbage-19": {
+  "Garbage 19": {
     cost: 19,
     resourceType: 'garbage',
     resources: 2,
     power: 3,
   },
-  "garbage-24": {
+  "Garbage 24": {
     cost: 24,
     resourceType: 'garbage',
     resources: 2,
     power: 4,
   },
-  "garbage-30": {
+  "Garbage 30": {
     cost: 30,
     resourceType: 'garbage',
     resources: 3,
     power: 6,
   },
-  "garbage-38": {
+  "Garbage 38": {
     cost: 38,
     resourceType: 'garbage',
     resources: 3,
     power: 7,
   },
-  "hybrid-05": {
+  "Hybrid 5": {
     cost: 5,
     resourceType: 'hybrid',
     resources: 2,
     power: 1,
   },
-  "hybrid-12": {
+  "Hybrid 12": {
     cost: 12,
     resourceType: 'hybrid',
     resources: 2,
     power: 2,
   },
-  "hybrid-29": {
+  "Hybrid 29": {
     cost: 29,
     resourceType: 'hybrid',
     resources: 1,
     power: 4,
   },
-  "hybrid-46": {
+  "Hybrid 46": {
     cost: 46,
     resourceType: 'hybrid',
     resources: 3,
     power: 7,
   },
-  "hybrid-21": {
+  "Hybrid 21": {
     cost: 21,
     resourceType: 'hybrid',
     resources: 2,
     power: 4,
   },
-  "nuclear-11": {
+  "Nuclear 11": {
     cost: 11,
     resourceType: 'uranium',
     resources: 1,
     power: 2,
   },
-  "nuclear-17": {
+  "Nuclear 17": {
     cost: 17,
     resourceType: 'uranium',
     resources: 1,
     power: 2,
   },
-  "nuclear-23": {
+  "Nuclear 23": {
     cost: 23,
     resourceType: 'uranium',
     resources: 1,
     power: 3,
   },
-  "nuclear-28": {
+  "Nuclear 28": {
     cost: 28,
     resourceType: 'uranium',
     resources: 1,
     power: 4,
   },
-  "nuclear-34": {
+  "Nuclear 34": {
     cost: 34,
     resourceType: 'uranium',
     resources: 1,
     power: 5,
   },
-  "nuclear-39": {
+  "Nuclear 39": {
     cost: 39,
     resourceType: 'uranium',
     resources: 1,
@@ -214,43 +214,43 @@ export const cards: Record<string, Partial<Card>> = {
   "step-3": {
     cost: 99
   },
-  "wind-13": {
+  "Wind 13": {
     cost: 13,
     resourceType: 'clean',
     resources: 0,
     power: 1,
   },
-  "wind-18": {
+  "Wind 18": {
     cost: 18,
     resourceType: 'clean',
     resources: 0,
     power: 2,
   },
-  "wind-22": {
+  "Wind 22": {
     cost: 22,
     resourceType: 'clean',
     resources: 0,
     power: 2,
   },
-  "wind-27": {
+  "Wind 27": {
     cost: 27,
     resourceType: 'clean',
     resources: 0,
     power: 3,
   },
-  "wind-33": {
+  "Wind 33": {
     cost: 33,
     resourceType: 'clean',
     resources: 0,
     power: 4,
   },
-  "wind-37": {
+  "Wind 37": {
     cost: 37,
     resourceType: 'clean',
     resources: 0,
     power: 4,
   },
-  "wind-44": {
+  "Wind 44": {
     cost: 44,
     resourceType: 'clean',
     resources: 0,

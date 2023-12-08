@@ -431,9 +431,9 @@ render(setup, {
       });
 
       board.layoutStep('out-of-turn', {
-        element: board,
-        top: 2,
-        left: 1.25,
+        element: board.first(PlayerMat, { player: board.game.players.current()[0] })!,
+        top: 8,
+        left: 2,
       });
 
     } else {
