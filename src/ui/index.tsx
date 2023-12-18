@@ -47,9 +47,15 @@ import PowerLabelSVG from './components/power-label-svg.js';
 import socket from './assets/socket.svg';
 
 render(setup, {
-  breakpoints: aspectRatio => aspectRatio < 4 / 5 ? 'vertical' : 'default',
+  boardSizes: (_screenX, _screenY, mobile) => mobile ? {
+    name: 'mobile',
+    aspectRatio: 1 / 2
+  } : {
+    name: 'desktop',
+    aspectRatio: 8 / 5,
+  },
 
-  layout: (board, _player, breakpoint) => {
+  layout: (board, _player, boardSize) => {
     const map = board.first(Space)!;
     const deck = board.first(Space, 'deck')!;
     const resources = board.first(Space, 'resources')!;
@@ -64,9 +70,7 @@ render(setup, {
       clean: null
     }
 
-    if (breakpoint !== 'vertical') {
-      board.appearance({ aspectRatio: 8 / 5 });
-
+    if (boardSize === 'desktop') {
       let area = { left: 2.4, top: -10, width: 45, height: 120 };
       const zones = board.zones.sort().join('-');
       if (zones === 'blue-purple-yellow') area = { left: 1, top: -30, width: 51, height: 136 };
@@ -92,8 +96,6 @@ render(setup, {
       });
 
     } else {
-
-      board.appearance({ aspectRatio: 1 / 2 });
 
       board.layout(map, {
         area: { left: 0, top: 9, width: 100, height: 76 }
@@ -174,7 +176,7 @@ render(setup, {
       ]
     });
 
-    if (breakpoint !== 'vertical') {
+    if (boardSize === 'desktop') {
       powerplants.layout(Card, {
         direction: 'ltr',
         rows: 2,
@@ -386,7 +388,7 @@ render(setup, {
       )
     });
 
-    if (breakpoint !== 'vertical') {
+    if (boardSize === 'desktop') {
       board.layoutStep('auction', {
         element: powerplants,
         right: 60,

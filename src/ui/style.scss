@@ -24,11 +24,8 @@ body {
   html.dark & {
     background: #335;
   }
-}
 
-#game {
   font-family: 'Din Condensed Web';
-  font-size: 8%;
 }
 
 #setup {
@@ -102,7 +99,7 @@ body {
     }
     .out-of-zone {
       filter: contrast(0.2) brightness(1.5);
-      #game.selectZone & {
+      #game[data-step="selectZone"] & {
         filter: none;
       }
     }
@@ -422,7 +419,7 @@ body {
   }
 }
 
-#game.vertical {
+#game[data-board-size="mobile"] {
   .PlayerMat {
     background: white;
     .name {
@@ -446,6 +443,10 @@ body {
     #step-phase {
       font-size: .15em;
       bottom: 22%;
+    }
+
+    #cover {
+      display: none;
     }
   }
 }
