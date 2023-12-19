@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@boardzilla/core@^0.0.47":
-  version "0.0.47"
-  resolved "https://registry.yarnpkg.com/@boardzilla/core/-/core-0.0.47.tgz#eb4254c353245eb94c4d1ae5e7df1d6e7ebf158e"
-  integrity sha512-GkBfaGFrX4pHKZCvXg9jBFShrJU9U8SjVJRlJMt1qUQqUsyE+Qt+fvuOwOPXyLavPcW2TUlgZVn3Y6W0mvZnzg==
+"@boardzilla/core@^0.0.48":
+  version "0.0.48"
+  resolved "https://registry.yarnpkg.com/@boardzilla/core/-/core-0.0.48.tgz#4de126076bde252fd49bf3f7b9933ea6491281e2"
+  integrity sha512-75UAT/I6ppPkmKQvCCQYnWo1jM7vseU3Qw6OCfdhnspP2FO+RVR/Y/SZW29E2nAOhsMl7QXJ+GgzvdEIDxnzGQ==
   dependencies:
     classnames "^2.3.1"
     graphology "^0.25.4"
@@ -20,10 +20,10 @@
     react-tooltip "^5.25.0"
     zustand "^4.4.0"
 
-"@boardzilla/devtools@^0.0.43":
-  version "0.0.43"
-  resolved "https://registry.yarnpkg.com/@boardzilla/devtools/-/devtools-0.0.43.tgz#e329351eb3291a0dbe78fdc322aef40eaf57a30f"
-  integrity sha512-SfmwMZWMJ4zTG2CYPGlZvw/flE8+5zfatxPBEWhyg3BIwNurPaXohQaOYIDYqVV/zNMRVZoE2NpHb01PBosDSA==
+"@boardzilla/devtools@^0.0.44":
+  version "0.0.44"
+  resolved "https://registry.yarnpkg.com/@boardzilla/devtools/-/devtools-0.0.44.tgz#649aa403841bbee1567532e2adeac2eaa65f1260"
+  integrity sha512-Qh79cDI40bQuvHbxQCEY/IgUMVQNx7w8WIE1zXTmYCScyANFel5tEd+gUeYAXiN98AqnLiASYKyX09zBEm0aVw==
   dependencies:
     "@joshbuddy/go-npm" "0.2.0"
 
