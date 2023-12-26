@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@boardzilla/core@^0.0.48":
-  version "0.0.48"
-  resolved "https://registry.yarnpkg.com/@boardzilla/core/-/core-0.0.48.tgz#4de126076bde252fd49bf3f7b9933ea6491281e2"
-  integrity sha512-75UAT/I6ppPkmKQvCCQYnWo1jM7vseU3Qw6OCfdhnspP2FO+RVR/Y/SZW29E2nAOhsMl7QXJ+GgzvdEIDxnzGQ==
+"@boardzilla/core@^0.0.50":
+  version "0.0.50"
+  resolved "https://registry.yarnpkg.com/@boardzilla/core/-/core-0.0.50.tgz#895529808b5c37ce1da894b91c2c517bb3d93e23"
+  integrity sha512-Z7d/ZFxE8C1Po3zqGO8RKCmM1bDrg/0jscRqx1Gj4sNfqpYKEj6kKfNAOOo8QpO+fqhYeu7irxFquabi1RvAvg==
   dependencies:
     classnames "^2.3.1"
     graphology "^0.25.4"
@@ -18,12 +18,13 @@
     react-dom "^18.2"
     react-draggable "^4.4.5"
     react-tooltip "^5.25.0"
+    uuid-random "^1.3.2"
     zustand "^4.4.0"
 
-"@boardzilla/devtools@^0.0.44":
-  version "0.0.44"
-  resolved "https://registry.yarnpkg.com/@boardzilla/devtools/-/devtools-0.0.44.tgz#649aa403841bbee1567532e2adeac2eaa65f1260"
-  integrity sha512-Qh79cDI40bQuvHbxQCEY/IgUMVQNx7w8WIE1zXTmYCScyANFel5tEd+gUeYAXiN98AqnLiASYKyX09zBEm0aVw==
+"@boardzilla/devtools@^0.0.45":
+  version "0.0.45"
+  resolved "https://registry.yarnpkg.com/@boardzilla/devtools/-/devtools-0.0.45.tgz#e9c789511c46a8102198fbe4a014f7bd3be815eb"
+  integrity sha512-3jA7AoDfSBaOLIjunxLf9mPqjN+MzN9yddr/ZK2PhWDQMjthqU8jRVVXTltalmhbNXsEXnX9dYpN2rUvDSO7qA==
   dependencies:
     "@joshbuddy/go-npm" "0.2.0"
 
@@ -350,9 +351,9 @@ chainsaw@~0.1.0:
     fsevents "~2.3.2"
 
 classnames@^2.3.0, classnames@^2.3.1:
-  version "2.3.2"
-  resolved "https://registry.yarnpkg.com/classnames/-/classnames-2.3.2.tgz#351d813bf0137fcc6a76a16b88208d2560a0d924"
-  integrity sha512-CSbhY4cFEJRe6/GQzIk5qXZ4Jeg5pcsP7b5peFSDpffpe1cqjASH/n9UTjBwOp6XpMSTwQ8Za2K5V02ueA7Tmw==
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/classnames/-/classnames-2.4.0.tgz#78011af2612f5c552195e2e657bd5fe2de973cac"
+  integrity sha512-lWxiIlphgAhTLN657pwU/ofFxsUTOWc2CRIFeoV5st0MGRJHStUnWIUJgDHxjUO/F0mXzGufXIM4Lfu/8h+MpA==
 
 clsx@^1.1.1:
   version "1.2.1"
@@ -1155,6 +1156,11 @@ util-deprecate@~1.0.1:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/util-deprecate/-/util-deprecate-1.0.2.tgz#450d4dc9fa70de732762fbd2d4a28981419a0ccf"
   integrity sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==
+
+uuid-random@^1.3.2:
+  version "1.3.2"
+  resolved "https://registry.yarnpkg.com/uuid-random/-/uuid-random-1.3.2.tgz#96715edbaef4e84b1dcf5024b00d16f30220e2d0"
+  integrity sha512-UOzej0Le/UgkbWEO8flm+0y+G+ljUon1QWTEZOq1rnMAsxo2+SckbiZdKzAHHlVh6gJqI1TjC/xwgR50MuCrBQ==
 
 uuid@^3.3.2:
   version "3.4.0"
