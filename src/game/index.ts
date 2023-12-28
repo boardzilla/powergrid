@@ -43,8 +43,8 @@ export class PowergridBoard extends Board<PowergridPlayer, PowergridBoard> {
     let advanceToStep2 = false;
     let advanceToStep3 = false;
     const powerplants = this.first('powerplants')!;
-    const step2Score = this.players.length < 6 ? 7 : 6;
-    if (this.step === 1 && this.players.max('score') >= step2Score) advanceToStep2 = true;
+    const step2Score = this.game.players.length < 6 ? 7 : 6;
+    if (this.step === 1 && this.game.players.max('score') >= step2Score) advanceToStep2 = true;
     if (powerplants.has('step-3')) advanceToStep3 = true;
 
     if (advanceToStep2) {
@@ -60,7 +60,7 @@ export class PowergridBoard extends Board<PowergridPlayer, PowergridBoard> {
   }
 
   sortPlayers(direction: 'asc' | 'desc') {
-    this.players.sortBy([
+    this.game.players.sortBy([
       'score',
       player => this.first(PlayerMat, {player})!.all(Card).max('cost') || 0
     ], direction);
@@ -69,8 +69,9 @@ export class PowergridBoard extends Board<PowergridPlayer, PowergridBoard> {
   applyMinimumRule() {
     const powerplants = this.first('powerplants')!;
     for (const card of powerplants.all(Card)) {
-      if (card.cost <= this.players.max('score')) {
+      if (card.cost <= this.game.players.max('score')) {
         this.game.message('{{card}} is below the minimum and is discarded', {card});
+        this.game.addDelay();
         card.remove();
         this.first('deck')!.top(Card)?.putInto(powerplants);
       }
@@ -79,7 +80,6 @@ export class PowergridBoard extends Board<PowergridPlayer, PowergridBoard> {
 
   refillResources(resource: ResourceType, amount: number) {
     if (resource === 'uranium' && this.noMoreUranium) return;
-    this.game.message('Resources have been resupplied');
     for (const space of this.lastN(amount, ResourceSpace, {resource, empty: true})) {
       this.pile.first(Resource, resource)?.putInto(space)
     };
@@ -357,6 +357,7 @@ export default createGame(PowergridPlayer, PowergridBoard, game => {
     const discount = powerplants.first(Card, { discount: true });
     if (discount && powerplants.first(Card) !== discount) {
       game.message('Removing discount because of a lower power plant');
+      game.addDelay();
       powerplants.first(Card)!.remove();
       discount.discount = false;
       deck.top(Card)?.putInto(powerplants);
@@ -424,7 +425,7 @@ export default createGame(PowergridPlayer, PowergridBoard, game => {
       board.lastBid = bid;
       board.playerWithHighestBid = player;
     }).message(
-      `{{player}} bid {{bid}} on ${board.first(Card, {auction: true})}`
+      `{{player}} bid {{bid}} on {{plant}}`, {plant: board.first(Card, {auction: true})!}
     ),
 
     passAuction: player => action({
@@ -465,8 +466,7 @@ export default createGame(PowergridPlayer, PowergridBoard, game => {
 
     build: player => action({
       prompt: 'Select cities for building'
-    }).move(
-      'building', board.first(PlayerMat, { player })!.first(Building)!,
+    }).chooseOnBoard(
       'city', map.all(City, city => city.canBuildFor(player.elektro)),
       {
         confirm: [
@@ -475,6 +475,7 @@ export default createGame(PowergridPlayer, PowergridBoard, game => {
         ]
       }
     ).do(({ city }) => {
+      board.first(PlayerMat, { player })!.first(Building)!.putInto(city);
       player.elektro -= city.costToBuild();
       city.owners.push(player);
       player.score = map.all(Building, {mine: true}).length;
@@ -484,13 +485,12 @@ export default createGame(PowergridPlayer, PowergridBoard, game => {
 
     arrangeResources: player => action({
       prompt: 'Arrange resources'
-    }).move(
+    }).chooseOnBoard(
       'resource', board.first(PlayerMat, { player })!.all(Resource),
+    ).chooseOnBoard(
       'card', ({ resource }) => resource.container(Card)!.others(Card, card => card.spaceFor(resource.type) > 0),
-      {
-        promptInto: 'to where'
-      }
-    ),
+      { prompt: 'to where' }
+    ).move('resource', 'card'),
 
     power: player => action({
       prompt: 'Power your plants',
@@ -670,6 +670,7 @@ export default createGame(PowergridPlayer, PowergridBoard, game => {
         board.phase = 'resources';
         const discount = powerplants.first(Card, { discount: true });
         if (discount) {
+          game.addDelay();
           discount.remove();
           deck.top(Card)?.putInto(powerplants);
         }
@@ -756,6 +757,8 @@ export default createGame(PowergridPlayer, PowergridBoard, game => {
           for (const r of resourceTypes) {
             board.refillResources(r, refill[r][game.players.length - 1][board.step - 1]);
           }
+          game.message('Resources have been resupplied');
+
           if (board.step === 3) {
             powerplants.first(Card)?.remove();
           } else {

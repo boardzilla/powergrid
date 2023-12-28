@@ -16,7 +16,7 @@ await esbuild.build({
   },
   keepNames: true,
   outdir: 'build/game',
-  entryPoints: ['src/game/game-interface.ts'],
+  entryPoints: ['./src/game/game-interface.ts'],
   bundle: true,
   minify,
   plugins: [sassPlugin()]

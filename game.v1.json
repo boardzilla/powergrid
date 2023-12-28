@@ -1,5 +1,5 @@
 {
-  "minPlayers": 1,
+  "minPlayers": 2,
   "maxPlayers": 4,
   "ui": {
     "root": ".",

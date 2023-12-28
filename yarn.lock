@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@boardzilla/core@^0.0.50":
-  version "0.0.50"
-  resolved "https://registry.yarnpkg.com/@boardzilla/core/-/core-0.0.50.tgz#895529808b5c37ce1da894b91c2c517bb3d93e23"
-  integrity sha512-Z7d/ZFxE8C1Po3zqGO8RKCmM1bDrg/0jscRqx1Gj4sNfqpYKEj6kKfNAOOo8QpO+fqhYeu7irxFquabi1RvAvg==
+"@boardzilla/core@^0.0.52":
+  version "0.0.52"
+  resolved "https://registry.yarnpkg.com/@boardzilla/core/-/core-0.0.52.tgz#e7ad13f809052e1430b56909c21a3674ae6a1f0e"
+  integrity sha512-O9L5COvadsDNhfQxNduE2Az0FP8MLG8p+4919KryVdKUfVSpyyoi6XER2fbgSseXkaO7n43cYfDuj3WvtbciNw==
   dependencies:
     classnames "^2.3.1"
     graphology "^0.25.4"
@@ -21,10 +21,10 @@
     uuid-random "^1.3.2"
     zustand "^4.4.0"
 
-"@boardzilla/devtools@^0.0.45":
-  version "0.0.45"
-  resolved "https://registry.yarnpkg.com/@boardzilla/devtools/-/devtools-0.0.45.tgz#e9c789511c46a8102198fbe4a014f7bd3be815eb"
-  integrity sha512-3jA7AoDfSBaOLIjunxLf9mPqjN+MzN9yddr/ZK2PhWDQMjthqU8jRVVXTltalmhbNXsEXnX9dYpN2rUvDSO7qA==
+"@boardzilla/devtools@^0.0.46":
+  version "0.0.46"
+  resolved "https://registry.yarnpkg.com/@boardzilla/devtools/-/devtools-0.0.46.tgz#e11d27ecb3f9f03eb31bb452b1c5833fac0c3e6b"
+  integrity sha512-ICiJb0n2drDMkgSHVt+yUDsj/5iPlQIw8Z9FXz/ec3YoljnwHvfcrLlOERwJC9WX0BR4C+K25W1Kt0YLrHxd6w==
   dependencies:
     "@joshbuddy/go-npm" "0.2.0"
 
@@ -351,9 +351,9 @@ chainsaw@~0.1.0:
     fsevents "~2.3.2"
 
 classnames@^2.3.0, classnames@^2.3.1:
-  version "2.4.0"
-  resolved "https://registry.yarnpkg.com/classnames/-/classnames-2.4.0.tgz#78011af2612f5c552195e2e657bd5fe2de973cac"
-  integrity sha512-lWxiIlphgAhTLN657pwU/ofFxsUTOWc2CRIFeoV5st0MGRJHStUnWIUJgDHxjUO/F0mXzGufXIM4Lfu/8h+MpA==
+  version "2.5.0"
+  resolved "https://registry.yarnpkg.com/classnames/-/classnames-2.5.0.tgz#9304d63d8d7135989e33e1ffb0bcc65178f92c2a"
+  integrity sha512-FQuRlyKinxrb5gwJlfVASbSrDlikDJ07426TrfPsdGLvtochowmkbnSFdQGJ2aoXrSetq5KqGV9emvWpy+91xA==
 
 clsx@^1.1.1:
   version "1.2.1"
@@ -917,9 +917,9 @@ react-is@^16.13.1:
   integrity sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==
 
 react-tooltip@^5.25.0:
-  version "5.25.0"
-  resolved "https://registry.yarnpkg.com/react-tooltip/-/react-tooltip-5.25.0.tgz#09d259c041bca1908449ac27b39717162655e0e3"
-  integrity sha512-/eGhmlwbHlJrVoUe75fb58rJfAy9aZnTvQAK9ZUPM0n9mmBGpEk13vDPiQVCeUuax+fBej+7JPsUXlhzaySc7w==
+  version "5.25.1"
+  resolved "https://registry.yarnpkg.com/react-tooltip/-/react-tooltip-5.25.1.tgz#4b7b1524fc92120b9e2bcfa54b5fba6ded6552c3"
+  integrity sha512-GDD0hrfbwGr2C6zEzVzzDzXSKeHM55cRFZQv2/EFmiFKVxWZk8hzOO5FNcwCpPyqVxQKUtYckReU5bXMd63alQ==
   dependencies:
     "@floating-ui/dom" "^1.0.0"
     classnames "^2.3.0"
