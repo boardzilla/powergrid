@@ -564,7 +564,7 @@ export default createGame(PowergridPlayer, PowergridBoard, game => {
     })
   });
 
-  game.defineFlow([
+  game.defineFlow(
     () => {
       // setup board
       deck.shuffle();
@@ -768,5 +768,5 @@ export default createGame(PowergridPlayer, PowergridBoard, game => {
         }
       }
     ])
-  ]);
+  );
 });
