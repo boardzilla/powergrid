@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@boardzilla/core@^0.0.55":
-  version "0.0.55"
-  resolved "https://registry.yarnpkg.com/@boardzilla/core/-/core-0.0.55.tgz#26ee7950b99c1e406b9decc47062f16e680646e2"
-  integrity sha512-/aqOxQ9ItZXsgdbRcSH1Za/kHvvmxSI6Ow3szxbVUdSJKMUU3+eD9S1hX0rninSGDTAa4d5zaLYlKhNt3Z9RBA==
+"@boardzilla/core@^0.0.56":
+  version "0.0.56"
+  resolved "https://registry.yarnpkg.com/@boardzilla/core/-/core-0.0.56.tgz#11cd2267356cfa19fcab8c30a0d78f4a33f301c8"
+  integrity sha512-BzPiktrIjLLsZ0OXsCX506Xmvs3/WliI32QpoPXk9MraTfHInMd93r+M4KD2L6t9ZfIDrZg8miwCfr7A60GuAQ==
   dependencies:
     classnames "^2.3.1"
     graphology "^0.25.4"
@@ -21,10 +21,10 @@
     uuid-random "^1.3.2"
     zustand "^4.4.0"
 
-"@boardzilla/devtools@^0.0.46":
-  version "0.0.46"
-  resolved "https://registry.yarnpkg.com/@boardzilla/devtools/-/devtools-0.0.46.tgz#e11d27ecb3f9f03eb31bb452b1c5833fac0c3e6b"
-  integrity sha512-ICiJb0n2drDMkgSHVt+yUDsj/5iPlQIw8Z9FXz/ec3YoljnwHvfcrLlOERwJC9WX0BR4C+K25W1Kt0YLrHxd6w==
+"@boardzilla/devtools@^0.0.48":
+  version "0.0.48"
+  resolved "https://registry.yarnpkg.com/@boardzilla/devtools/-/devtools-0.0.48.tgz#883bdf5eb426fa239e7b47b37fdd0affc865d83a"
+  integrity sha512-H2rxnUvZDr2euIUVVEvqKmNxJ04zzGRx6vmpNMNXhKHrHwAsWiD304pvvFne2W6HSE2e9zRbtgvwNUcWHFwwsg==
   dependencies:
     "@joshbuddy/go-npm" "0.2.0"
 
