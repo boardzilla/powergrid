@@ -307,8 +307,8 @@ export default ({amount}: {amount: number}) => (
             transform="matrix(.38041 0 0 .38504 -41.963 -5.243)"
             xmlSpace="preserve"
           >
-            <tspan x="242" y="195.032">
-              <tspan fontSize="134.956">{amount}</tspan>
+            <tspan x="242" y={amount > 99 ? 187 : 192}>
+              <tspan fontSize={amount > 99 ? 115 : 134.956}>{amount}</tspan>
             </tspan>
           </text>
         </g>
