@@ -262,12 +262,21 @@ render(setup, {
     board.appearance({
       render: () => (
         <>
-          <div id="step-phase">
-            Step {board.step}<br/>
-            {board.phase === 'auction' && <img src={gavel}/>}
-            {board.phase === 'resources' && <img src={resourceBuying}/>}
-            {board.phase === 'build' && <img src={buildingFill}/>}
-            {board.phase === 'power' && <img src={socket}/>}
+          <div id="round-info">
+            <div id="step-phase">
+              Step {board.step}<br/>
+              {board.phase === 'auction' && <img src={gavel}/>}
+              {board.phase === 'resources' && <img src={resourceBuying}/>}
+              {board.phase === 'build' && <img src={buildingFill}/>}
+              {board.phase === 'power' && <img src={socket}/>}
+            </div>
+            <ol id="round-order">
+              {board.roundOrder.map(player => (
+                <li key={player.name} style={{ opacity: player.finishedPhase ? '40%': '100%'}}>
+                  <div style={{background: player.color}}>{player.name}</div>
+                </li>
+              ))}
+            </ol>
           </div>
           <div id="sea"/>
           <div id="cover"/>
