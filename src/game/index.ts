@@ -25,25 +25,39 @@ export class PowergridPlayer extends Player<PowergridPlayer, PowergridBoard> {
   cities: number = 0;
   passedThisAuction: boolean = false;
   havePassedAuctionPhase: boolean = false;
+  finishedPhase: boolean = false;
+
+  turnFinished() {
+    this.finishedPhase = true;
+  }
+
 };
 
+type GamePhase = 'auction' | 'resources' | 'build' | 'power';
 type ResourceType = 'coal' | 'oil' | 'garbage' | 'uranium'
 const resourceTypes: ResourceType[] = ['coal', 'oil', 'garbage', 'uranium'];
 
 export class PowergridBoard extends Board<PowergridPlayer, PowergridBoard> {
   step: number = 1;
-  phase: 'auction' | 'resources' | 'build' | 'power' = 'auction';
+  phase: GamePhase = 'auction'; 
   turn: number = 0;
   zones: string[] = [];
   lastBid?: number;
   playerWithHighestBid?: PowergridPlayer;
   noMoreUranium = false;
+  roundOrder: PowergridPlayer[] = [];
 
   sortPlayers(direction: 'asc' | 'desc') {
     this.game.players.sortBy([
       'score',
       player => player.allMy(Card).max('cost') || 0
     ], direction);
+  }
+
+  startNewPhase(gamephase : GamePhase) {
+    this.game.message("New phase: " + gamephase);
+    this.phase = gamephase;
+    this.game.players.forEach(player => player.finishedPhase = false)
   }
 
   applyMinimumRule() {
@@ -330,6 +344,7 @@ export default createGame(PowergridPlayer, PowergridBoard, game => {
   resources.create(ResourceSpace, 'uranium-16', { cost: 16, resource: 'uranium' });
 
   const powerplants = board.create(Space, 'powerplants');
+
   powerplants.onEnter(Card, c => {
     c.showToAll();
     board.applyMinimumRule();
@@ -414,6 +429,7 @@ export default createGame(PowergridPlayer, PowergridBoard, game => {
       condition: board.turn > 1
     }).do(() => {
       player.havePassedAuctionPhase = true
+      player.turnFinished();
     }).message(
       `{{player}} passes the auction round`
     ),
@@ -443,7 +459,12 @@ export default createGame(PowergridPlayer, PowergridBoard, game => {
       `{{player}} scraps their {{card}}`
     ),
 
-    pass: () => action({ prompt: 'Done' }),
+    pass: player => action({
+      prompt: 'Done' }
+    ).do(() => {
+        player.turnFinished();
+      } 
+    ),
 
     build: player => action({
       prompt: 'Select cities for building'
@@ -590,10 +611,14 @@ export default createGame(PowergridPlayer, PowergridBoard, game => {
         }),
       }),
       () => {
+        board.startNewPhase('auction');
         board.sortPlayers('desc');
-        board.phase = 'auction';
         board.turn += 1;
-        for (const player of game.players) player.havePassedAuctionPhase = false;
+        board.roundOrder = [...game.players];
+        for (const player of game.players) {
+          player.havePassedAuctionPhase = false;
+        }
+        game.message("Round order:" + board.roundOrder.map(player => player.name).join(",")  );
         powerplants.first(Card)!.discount = true;
       },
       eachPlayer({
@@ -636,6 +661,7 @@ export default createGame(PowergridPlayer, PowergridBoard, game => {
                   ({ auctionPlayer }) => {
                     const winner = board.playerWithHighestBid!;
                     game.message(`${winner} won the bid with ${board.lastBid}`);
+                    board.playerWithHighestBid.turnFinished();
                     winner.elektro -= board.lastBid!;
                     board.lastBid = undefined;
                     powerplants.first(Card, {auction: true})!.putInto(board.first(PlayerMat, {player: winner})!);
@@ -652,8 +678,13 @@ export default createGame(PowergridPlayer, PowergridBoard, game => {
       }),
 
       () => {
-        board.sortPlayers('asc');
-        board.phase = 'resources';
+
+        if (board.turn === 1) {
+          board.sortPlayers('desc');
+          board.roundOrder = [...game.players];
+        }
+        board.startNewPhase('resources');
+        game.players.reverse();
         const discount = powerplants.first(Card, { discount: true });
         if (discount) {
           game.addDelay();
@@ -684,7 +715,9 @@ export default createGame(PowergridPlayer, PowergridBoard, game => {
         }),
       }),
 
-      () => { board.phase = 'build' },
+      () => { 
+        board.startNewPhase('build');
+      },
 
       eachPlayer({
         name: 'buildPlayer',
@@ -698,7 +731,7 @@ export default createGame(PowergridPlayer, PowergridBoard, game => {
       }),
 
       () => {
-        board.phase = 'power';
+        board.startNewPhase('power');
         if (game.players.max('score') >= victory[game.players.length - 2]) {
           game.message("Final power phase!");
         }

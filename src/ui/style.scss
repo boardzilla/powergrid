@@ -35,22 +35,48 @@ body {
 
 #play-area {
   overflow: hidden;
-  #step-phase {
-    font-size: .35em;
-    text-align: center;
+
+  #round-info {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
     position: absolute;
     bottom: 0;
     left: 0;
     z-index: 10;
-    padding: 0.2em 0.5em;
-    background: #fff8;
-    border-radius: 0 0.5em 0 0;
-    border: 0.1em solid black;
-    border-width: 0.1em 0.1em 0 0;
-    img {
-      width: 2.5em;
+    padding: 0;
+    margin: 0;
+    
+    #step-phase {
+      margin: 0;
+      font-size: .35em;
+      text-align: center;
+      background: #fff8;
+      padding: 0.2em 0.5em;
+      border-radius: 0 0.5em 0 0;
+      border: 0.1em solid black;
+      border-width: 0.1em 0.1em 0 0;
+      img {
+        width: 2.5em;
+      }
+    }
+
+    #round-order {
+      display: flex;
+      flex-flow: row wrap;
+      font-size: .20em;
+      background: #fff8;
+      margin: 0;
+      padding: 0;
+      
+      li {
+        padding: 0.2em 0.5em;
+        list-style: none;
+        text-align: center;
+      }
     }
   }
+
 
   #sea {
     width: 100%;
