@@ -47,6 +47,16 @@ body {
     border-radius: 0 0.5em 0 0;
     border: 0.1em solid black;
     border-width: 0.1em 0.1em 0 0;
+    #turn-markers {
+      text-align: center;
+      line-height: .5em;
+      .turn-marker {
+        width: .5em;
+        height: .5em;
+        display: inline-block;
+        margin: 0 .1em;
+      }
+    }
     img {
       width: 2.5em;
     }
@@ -347,52 +357,32 @@ body {
   .PlayerMat {
     .elektro {
       height: 40%;
-      width: 16%;
+      width: 10%;
       top: 50%;
       position: absolute;
-      left: 2%;
+      left: 10%;
       html.dark & {
         filter: invert(1);
       }
     }
+
     .lightning {
-      top: 5%;
+      top: 50%;
       position: absolute;
       left: 0%;
-      width: 20%;
+      width: 10%;
       height: 40%;
     }
 
-    .name {
-      color: white;
-      font-size: 1.5em;
-      text-align: center;
-      width: 22%;
-      height: 20%;
+    .profile-badge {
       position: absolute;
-      right: 0;
-      bottom: 0;
-      padding: 0.1em 0.4em;
-      border-radius: 0.2em 0 0 0.2em;
-      overflow: hidden;
-      white-space: nowrap;
-    }
-
-    .avatar {
-      width: 20%;
-      height: auto;
-      position: absolute;
-      right: 1%;
+      left: .5%;
       top: 2%;
-      border-radius: 50%;
-      border: .5em solid;
-    }
-
-    .divider {
-      width: 82%;
-      position: absolute;
-      bottom: 0;
-      height: 3%;
+      font-size: 360%;
+      .player-name {
+        font-size: 50%;
+        margin-top: .28em;
+      }
     }
   }
 }
@@ -419,11 +409,14 @@ body {
   }
 }
 
-#game[data-board-size="mobile"] {
+#game.mobile {
   .PlayerMat {
     background: white;
     .name {
       font-size: .75em;
+    }
+    .profile-badge {
+      font-size: 200%;
     }
   }
 

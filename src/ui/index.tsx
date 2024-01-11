@@ -2,7 +2,8 @@ import React from 'react';
 
 import {
   render,
-  times
+  times,
+  ProfileBadge,
 } from '@boardzilla/core';
 
 import {
@@ -57,9 +58,6 @@ render(setup, {
 
   layout: (board, _player, boardSize) => {
     const map = board.first(Space)!;
-    const deck = board.first(Space, 'deck')!;
-    const resources = board.first(Space, 'resources')!;
-    const powerplants = board.first(Space, 'powerplants')!;
 
     const resourceSvgs = {
       coal: coalOutline,
@@ -82,13 +80,13 @@ render(setup, {
       board.layout(board.all(PlayerMat, { mine: false }), {
         area: { left: 50, top: 0, width: 50, height: 20 },
       });
-      board.layout(powerplants, {
+      board.layout($.powerplants, {
         area: { left: 50, top: 20, width: 40, height: 20 },
       });
-      board.layout(deck, {
+      board.layout($.deck, {
         area: { left: 90, top: 20, width: 10, height: 20 },
       });
-      board.layout(resources, {
+      board.layout($.resources, {
         area: { left: 50, top: 40, width: 50, height: 40 },
       });
       board.layout(board.all(PlayerMat, { mine: true }), {
@@ -103,13 +101,13 @@ render(setup, {
       board.layout(board.all(PlayerMat, { mine: false }), {
         area: { left: 0, top: 0, width: 100, height: 15 },
       });
-      board.layout(powerplants, {
+      board.layout($.powerplants, {
         area: { left: 0, top: 15, width: 30, height: 8 },
       });
-      board.layout(deck, {
+      board.layout($.deck, {
         area: { left: 90, top: 15, width: 10, height: 5 },
       });
-      board.layout(resources, {
+      board.layout($.resources, {
         area: { left: 0, top: 78, width: 100, height: 7 },
       });
       board.layout(board.all(PlayerMat, { mine: true }), {
@@ -177,7 +175,7 @@ render(setup, {
     });
 
     if (boardSize === 'desktop') {
-      powerplants.layout(Card, {
+      $.powerplants.layout(Card, {
         direction: 'ltr',
         rows: 2,
         columns: 4,
@@ -186,7 +184,7 @@ render(setup, {
         alignment: 'left',
       });
 
-      resources.layout(ResourceSpace, {
+      $.resources.layout(ResourceSpace, {
         gap: 0.5,
         margin: { left: 18, right: 1, top: 1, bottom: 1 },
         alignment: 'left',
@@ -196,14 +194,14 @@ render(setup, {
 
     } else {
 
-      powerplants.layout(Card, {
+      $.powerplants.layout(Card, {
         direction: 'ltr',
         rows: 2,
         columns: 4,
         alignment: 'top right'
       });
 
-      resources.layout(resources.all(ResourceSpace, {resource: 'oil'}), {
+      $.resources.layout($.resources.all(ResourceSpace, {resource: 'oil'}), {
         area: { left: 0, top: 0, width: 100, height: 25 },
         alignment: 'left',
         columns: 24,
@@ -211,7 +209,7 @@ render(setup, {
         gap: 0.5
       });
 
-      resources.layout(resources.all(ResourceSpace, {resource: 'coal'}), {
+      $.resources.layout($.resources.all(ResourceSpace, {resource: 'coal'}), {
         area: { left: 0, top: 25, width: 100, height: 25 },
         alignment: 'left',
         columns: 24,
@@ -219,7 +217,7 @@ render(setup, {
         gap: 0.5
       });
 
-      resources.layout(resources.all(ResourceSpace, {resource: 'garbage'}), {
+      $.resources.layout($.resources.all(ResourceSpace, {resource: 'garbage'}), {
         area: { left: 0, top: 50, width: 100, height: 25 },
         alignment: 'left',
         columns: 24,
@@ -227,7 +225,7 @@ render(setup, {
         gap: 0.5
       });
 
-      resources.layout(resources.all(ResourceSpace, {resource: 'uranium'}), {
+      $.resources.layout($.resources.all(ResourceSpace, {resource: 'uranium'}), {
         area: { left: 0, top: 75, width: 100, height: 25 },
         alignment: 'left',
         columns: 24,
@@ -237,13 +235,13 @@ render(setup, {
     }
 
     board.all(PlayerMat).layout(Card, {
-      area: { top: 10, left: 12, width: 85, height: 64 },
+      area: { top: 10, left: 30, width: 65, height: 80 },
       gap: 0.5,
-      columns: 4,
+      columns: 3,
       direction: 'ltr'
     });
 
-    deck.layout(Card, {
+    $.deck.layout(Card, {
       direction: 'ltr',
       offsetColumn: { x: 10, y: 10 },
       alignment: 'top right',
@@ -268,6 +266,9 @@ render(setup, {
             {board.phase === 'resources' && <img src={resourceBuying}/>}
             {board.phase === 'build' && <img src={buildingFill}/>}
             {board.phase === 'power' && <img src={socket}/>}
+            <div id="turn-markers">
+              {board.game.players.map(p => <div key={p.position} className="turn-marker" style={{background: p.color}}/>)}
+            </div>
           </div>
           <div id="sea"/>
           <div id="cover"/>
@@ -281,11 +282,7 @@ render(setup, {
         <>
           <ElektroSVG amount={mat.player.elektro}/>
           <LightningSVG amount={mat.player.score}/>
-          <div className="name" style={{background: mat.player.color}}>
-            {mat.player.name}<br/>
-          </div>
-          <img className="avatar" style={{borderColor: mat.player.color}} src={mat.player.avatar}/>
-          {mat.mine || <div className="divider" style={{background: mat.player.color}}/>}
+          <ProfileBadge player={mat.player}/>
         </>
       )
     });
@@ -331,11 +328,11 @@ render(setup, {
     });
     board.all(PlayerMat).all(Building).appearance({ render: false });
 
-    deck.appearance({
+    $.deck.appearance({
       render: deck => <div className="count">{deck.all(Card).length}</div>
     })
 
-    powerplants.appearance({
+    $.powerplants.appearance({
       render: () => {
         if (board.phase === 'auction' && board.lastBid && board.playerWithHighestBid) return (
           <div style={{background: board.playerWithHighestBid.color}} className="bid">
@@ -390,20 +387,20 @@ render(setup, {
 
     if (boardSize === 'desktop') {
       board.layoutStep('auction', {
-        element: powerplants,
+        element: $.powerplants,
         right: 60,
         top: 10,
         width: 35
       });
 
       board.layoutStep('bid', {
-        element: powerplants,
+        element: $.powerplants,
         right: 60,
         top: 35,
       });
 
       board.layoutStep('purchaseResources', {
-        element: resources,
+        element: $.resources,
         right: 66.6,
         top: 6,
       });
@@ -433,15 +430,15 @@ render(setup, {
       });
 
       board.layoutStep('out-of-turn', {
-        element: board.first(PlayerMat, { player: board.game.players.current() })!,
-        top: 8,
-        left: 2,
+        element: board,
+        top: 2,
+        left: 1.4,
       });
 
     } else {
 
       board.layoutStep('auction', {
-        element: powerplants,
+        element: $.powerplants,
         left: 0,
         top: 100,
       });

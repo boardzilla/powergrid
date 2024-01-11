@@ -8,11 +8,6 @@ import {
   createBoardClasses,
   Player,
   Board,
-  playerActions,
-  ifElse,
-  loop,
-  whileLoop,
-  eachPlayer,
   Do,
   union,
 } from '@boardzilla/core';
@@ -47,13 +42,12 @@ export class PowergridBoard extends Board<PowergridPlayer, PowergridBoard> {
   }
 
   applyMinimumRule() {
-    const powerplants = this.first('powerplants')!;
-    for (const card of powerplants.all(Card)) {
+    for (const card of $.powerplants.all(Card)) {
       if (card.cost <= this.game.players.max('score')) {
         this.game.message('{{card}} is below the minimum and is discarded', {card});
         this.game.addDelay();
         card.remove();
-        this.first('deck')!.top(Card)?.putInto(powerplants);
+        $.deck.top(Card)?.putInto($.powerplants);
       }
     }
   };
@@ -174,6 +168,13 @@ const victory = [18, 17, 17, 15, 14];
 export default createGame(PowergridPlayer, PowergridBoard, game => {
 
   const { board, action } = game;
+  const {
+    playerActions,
+    ifElse,
+    loop,
+    whileLoop,
+    eachPlayer,
+  } = game.flowCommands;
 
   board.registerClasses(
     Card,
@@ -461,7 +462,9 @@ export default createGame(PowergridPlayer, PowergridBoard, game => {
       city.owners.push(player);
       player.score = map.all(Building, {mine: true}).length;
       board.applyMinimumRule();
-    }),
+    }).message(
+      '{{player}} built a city in {{city}}'
+    ),
 
     arrangeResources: player => action({
       prompt: 'Arrange resources'
@@ -617,6 +620,7 @@ export default createGame(PowergridPlayer, PowergridBoard, game => {
                   eachPlayer({
                     name: 'biddingPlayer',
                     startingPlayer: ({ auctionPlayer }) => auctionPlayer,
+                    nextPlayer: player => game.players.seatedNext(player),
                     continueUntil: () => board.lastBid !== undefined && game.players.filter(p => !p.passedThisAuction).length === 1,
                     do: ifElse({
                       if: ({ biddingPlayer }) => !biddingPlayer.passedThisAuction,
@@ -652,7 +656,8 @@ export default createGame(PowergridPlayer, PowergridBoard, game => {
       }),
 
       () => {
-        board.sortPlayers('asc');
+        if (board.turn === 1) board.sortPlayers('desc'); // resort only for first turn
+        game.players.reverse();
         board.phase = 'resources';
         const discount = powerplants.first(Card, { discount: true });
         if (discount) {
@@ -710,14 +715,14 @@ export default createGame(PowergridPlayer, PowergridBoard, game => {
           loop(playerActions({
             name: 'arrange',
             actions: [
-              { name: 'arrangeResources', do: Do.repeat },
+              'arrangeResources',
               { name: 'pass', do: Do.break }
             ]
           })),
           loop(playerActions({
             name: 'power',
             actions: [
-              { name: 'power', do: Do.repeat },
+              'power',
               { name: 'pass', do: Do.break }
             ]
           })),
