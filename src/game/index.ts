@@ -682,9 +682,9 @@ export default createGame(PowergridPlayer, PowergridBoard, game => {
         name: 'purchasePlayer',
         do: playerActions({
           name: 'purchaseResources',
+          optional: 'Done',
           actions: [
             { name: 'buyResource', do: Do.repeat },
-            'pass'
           ]
         }),
       }),
@@ -695,9 +695,9 @@ export default createGame(PowergridPlayer, PowergridBoard, game => {
         name: 'buildPlayer',
         do: playerActions({
           name: 'build',
+          optional: 'Done',
           actions: [
             { name: 'build', do: Do.repeat },
-            'pass'
           ]
         }),
       }),

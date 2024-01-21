@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@boardzilla/core@^0.0.60":
-  version "0.0.60"
-  resolved "https://registry.yarnpkg.com/@boardzilla/core/-/core-0.0.60.tgz#e1215c879b73e26deee328aca7aacff4d9f95e27"
-  integrity sha512-Ujcf2HIqBdbolu2vKTIZsz59wL+aW4WEaG0Pm2DxP8OQHDn0Bluy5ADhF04RbaP7/hnKlpMhIkOBe4yJNFX9uw==
+"@boardzilla/core@^0.0.64":
+  version "0.0.64"
+  resolved "https://registry.yarnpkg.com/@boardzilla/core/-/core-0.0.64.tgz#9c120085ffd095deb4618f0af9c2cc24e193f0be"
+  integrity sha512-n/i3Kz3WHyHEAcuPcrII1xmxcTMFjI2NuOTULwtilh4KnyaYF9+AOc5lii/N3A6v4q++/mfzw5HJrBKuK9rgaA==
   dependencies:
     classnames "^2.3.1"
     graphology "^0.25.4"
@@ -21,10 +21,10 @@
     uuid-random "^1.3.2"
     zustand "^4.4.0"
 
-"@boardzilla/devtools@^0.0.51":
-  version "0.0.51"
-  resolved "https://registry.yarnpkg.com/@boardzilla/devtools/-/devtools-0.0.51.tgz#568c29261dfc3ccaf28487a44cf5dc53f92dab7e"
-  integrity sha512-ZgUz2DbSO/yVISJ3F6dvUNsAL/TOEGHxWDBioIC2pBL/qLHM+CY7gea2+Fq/PxcsHeFxSGfNrnQpKuyfg/HSZA==
+"@boardzilla/devtools@^0.0.53":
+  version "0.0.53"
+  resolved "https://registry.yarnpkg.com/@boardzilla/devtools/-/devtools-0.0.53.tgz#a3438d2b1dab509241066efd22114fc1b9eb1432"
+  integrity sha512-pVo0gIF9m988+W7+REhQDlZg8bazzn6mPXVRmaJuLXWK0WeOc8Ap2e2fUlgSTeb8Ulj5u73RNZgTzVUJpxR9Vg==
   dependencies:
     "@joshbuddy/go-npm" "0.2.0"
 
@@ -917,9 +917,9 @@ react-is@^16.13.1:
   integrity sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==
 
 react-tooltip@^5.25.0:
-  version "5.25.1"
-  resolved "https://registry.yarnpkg.com/react-tooltip/-/react-tooltip-5.25.1.tgz#4b7b1524fc92120b9e2bcfa54b5fba6ded6552c3"
-  integrity sha512-GDD0hrfbwGr2C6zEzVzzDzXSKeHM55cRFZQv2/EFmiFKVxWZk8hzOO5FNcwCpPyqVxQKUtYckReU5bXMd63alQ==
+  version "5.26.0"
+  resolved "https://registry.yarnpkg.com/react-tooltip/-/react-tooltip-5.26.0.tgz#340d054cf952c43c2442f3af24bfc5c2b81fa80a"
+  integrity sha512-UBbwy3fo1KYDwRCOWwM6AEfQsk9shgVfNkXFqgwS33QHplzg7xao/7mX/6wd+lE6KSZzhUNTkB5TNk9SMaBV/A==
   dependencies:
     "@floating-ui/dom" "^1.0.0"
     classnames "^2.3.0"
@@ -1182,8 +1182,8 @@ wrappy@1:
   integrity sha512-l4Sp/DRseor9wL6EvV2+TuQn63dMkPjZ/sp9XkghTEbV9KlPS1xUsZ3u7/IQO4wxtcFB4bgpQPRcR3QCvezPcQ==
 
 zustand@^4.4.0:
-  version "4.4.7"
-  resolved "https://registry.yarnpkg.com/zustand/-/zustand-4.4.7.tgz#355406be6b11ab335f59a66d2cf9815e8f24038c"
-  integrity sha512-QFJWJMdlETcI69paJwhSMJz7PPWjVP8Sjhclxmxmxv/RYI7ZOvR5BHX+ktH0we9gTWQMxcne8q1OY8xxz604gw==
+  version "4.5.0"
+  resolved "https://registry.yarnpkg.com/zustand/-/zustand-4.5.0.tgz#141354af56f91de378aa6c4b930032ab338f3ef0"
+  integrity sha512-zlVFqS5TQ21nwijjhJlx4f9iGrXSL0o/+Dpy4txAP22miJ8Ti6c1Ol1RLNN98BMib83lmDH/2KmLwaNXpjrO1A==
   dependencies:
     use-sync-external-store "1.2.0"
