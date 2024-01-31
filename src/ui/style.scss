@@ -33,7 +33,7 @@ body {
   background: none;
 }
 
-#play-area {
+#game {
   overflow: hidden;
   #step-phase {
     font-size: .35em;
@@ -216,11 +216,6 @@ body {
     margin-right: 18%;
   }
 
-  [data-zoomed] .Card[data-auction=true] {
-    transform: unset;
-    z-index: 10;
-  }
-
   .Card {
     background: none;
     &.selectable {
@@ -252,6 +247,7 @@ body {
         width: 86%;
         height: 70%;
         position: absolute;
+        border-radius: .25em .25em 0 0;
       }
       > div.inner {
         border-radius: 4%;
@@ -293,6 +289,7 @@ body {
           height: 20%;
           left: 0%;
           bottom: 0%;
+          border-radius: 0 0 .25em .25em;
           &.oil {
             background: #555;
           }

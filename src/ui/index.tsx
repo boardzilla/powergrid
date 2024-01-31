@@ -345,7 +345,7 @@ render(setup, {
 
     board.all(Card).appearance({
       aspectRatio: 1,
-      zoomable: card => card.isVisible(),
+      info: card => card.isVisible() ? <p>Power {card.power} cit{card.power === 1 ? 'y' : 'ies'} for {card.resources ? card.resources + ' ' + card.resourceType : 'free'}</p> : false,
       render: card => (
         <div className={`outer ${card.resourcesAvailableToPower() && card.container(PlayerMat) ? 'powerable' : ''}`}>
           {card.isVisible() && (
@@ -386,6 +386,12 @@ render(setup, {
     });
 
     if (boardSize === 'desktop') {
+      board.layoutStep('selectZone', {
+        element: board,
+        right: 51,
+        top: 1,
+      });
+
       board.layoutStep('auction', {
         element: $.powerplants,
         right: 60,

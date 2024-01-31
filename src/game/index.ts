@@ -737,12 +737,12 @@ export default createGame(PowergridPlayer, PowergridBoard, game => {
               const rev = income[powerPlayer.cities];
               powerPlayer.elektro += rev;
               game.message(`${powerPlayer} earned ${rev} elektro for ${powerPlayer.cities} ${powerPlayer.cities === 1 ? 'city' : 'cities'}`);
-            }
 
-            powerPlayer.cities = 0;
-            // unpower plants
-            for (const card of powerPlayer.allMy(Card, { powered: true })) {
-              card.powered = false;
+              powerPlayer.cities = 0;
+              // unpower plants
+              for (const card of powerPlayer.allMy(Card, { powered: true })) {
+                card.powered = false;
+              }
             }
           },
         ]
@@ -758,7 +758,7 @@ export default createGame(PowergridPlayer, PowergridBoard, game => {
         }
         if (game.players.max('score') >= victory[game.players.length - 2]) {
           const winner = game.players.withHighest('cities', 'elektro');
-          game.message(`${winner} wins with ${winner.cities} cities!`)
+          game.message(`${winner} wins with ${winner.cities} powered cities!`)
           game.finish(winner);
         } else {
           for (const r of resourceTypes) {

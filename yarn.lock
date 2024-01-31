@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@boardzilla/core@^0.0.64":
-  version "0.0.64"
-  resolved "https://registry.yarnpkg.com/@boardzilla/core/-/core-0.0.64.tgz#9c120085ffd095deb4618f0af9c2cc24e193f0be"
-  integrity sha512-n/i3Kz3WHyHEAcuPcrII1xmxcTMFjI2NuOTULwtilh4KnyaYF9+AOc5lii/N3A6v4q++/mfzw5HJrBKuK9rgaA==
+"@boardzilla/core@^0.0.71":
+  version "0.0.71"
+  resolved "https://registry.yarnpkg.com/@boardzilla/core/-/core-0.0.71.tgz#8ddf6aa43b0b289ade2bde004541a6beb1f2e7a4"
+  integrity sha512-3G1VFXO8ZHllQOUJrD57CU0JkJOXSG6eym4d0be2tevWoak4gxLe+PULZZaabwhTqh0QPQCaKlVN6ufNdgzL9g==
   dependencies:
     classnames "^2.3.1"
     graphology "^0.25.4"
@@ -17,16 +17,15 @@
     react-color "^2.19.3"
     react-dom "^18.2"
     react-draggable "^4.4.5"
-    react-tooltip "^5.25.0"
     uuid-random "^1.3.2"
     zustand "^4.4.0"
 
-"@boardzilla/devtools@^0.0.53":
-  version "0.0.53"
-  resolved "https://registry.yarnpkg.com/@boardzilla/devtools/-/devtools-0.0.53.tgz#a3438d2b1dab509241066efd22114fc1b9eb1432"
-  integrity sha512-pVo0gIF9m988+W7+REhQDlZg8bazzn6mPXVRmaJuLXWK0WeOc8Ap2e2fUlgSTeb8Ulj5u73RNZgTzVUJpxR9Vg==
+"@boardzilla/devtools@^0.0.63":
+  version "0.0.63"
+  resolved "https://registry.yarnpkg.com/@boardzilla/devtools/-/devtools-0.0.63.tgz#3bbc7a29b9713dc9ff48f5f80a6127de5fe73e0e"
+  integrity sha512-kbQxV20C7Zy1FYDWWnj7+sy/jlBYUPVJkjMAgTcibSVQpZxgsqaufuTq2uglmItw3pINJXRjb2/8TSAI7grIOA==
   dependencies:
-    "@joshbuddy/go-npm" "0.2.0"
+    "@joshbuddy/go-npm" "0.2.2"
 
 "@esbuild/android-arm64@0.19.7":
   version "0.19.7"
@@ -138,35 +137,15 @@
   resolved "https://registry.yarnpkg.com/@esbuild/win32-x64/-/win32-x64-0.19.7.tgz#02c4446f802706098d8e6ee70cf2b7aba96ded0b"
   integrity sha512-gRaP2sk6hc98N734luX4VpF318l3w+ofrtTu9j5L8EQXF+FzQKV6alCOHMVoJJHvVK/mGbwBXfOL1HETQu9IGQ==
 
-"@floating-ui/core@^1.5.3":
-  version "1.5.3"
-  resolved "https://registry.yarnpkg.com/@floating-ui/core/-/core-1.5.3.tgz#b6aa0827708d70971c8679a16cf680a515b8a52a"
-  integrity sha512-O0WKDOo0yhJuugCx6trZQj5jVJ9yR0ystG2JaNAemYUWce+pmM6WUEFIibnWyEJKdrDxhm75NoSRME35FNaM/Q==
-  dependencies:
-    "@floating-ui/utils" "^0.2.0"
-
-"@floating-ui/dom@^1.0.0":
-  version "1.5.4"
-  resolved "https://registry.yarnpkg.com/@floating-ui/dom/-/dom-1.5.4.tgz#28df1e1cb373884224a463235c218dcbd81a16bb"
-  integrity sha512-jByEsHIY+eEdCjnTVu+E3ephzTOzkQ8hgUfGwos+bg7NlH33Zc5uO+QHz1mrQUOgIKKDD1RtS201P9NvAfq3XQ==
-  dependencies:
-    "@floating-ui/core" "^1.5.3"
-    "@floating-ui/utils" "^0.2.0"
-
-"@floating-ui/utils@^0.2.0":
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/@floating-ui/utils/-/utils-0.2.1.tgz#16308cea045f0fc777b6ff20a9f25474dd8293d2"
-  integrity sha512-9TANp6GPoMtYzQdt54kfAyMmz1+osLlXdg2ENroU7zzrtflTLrrC/lgrIfaSe+Wu0b89GKccT7vxXA0MoAIO+Q==
-
 "@icons/material@^0.2.4":
   version "0.2.4"
   resolved "https://registry.yarnpkg.com/@icons/material/-/material-0.2.4.tgz#e90c9f71768b3736e76d7dd6783fc6c2afa88bc8"
   integrity sha512-QPcGmICAPbGLGb6F/yNf/KzKqvFx8z5qx3D1yFqVAjoFmXK35EgyW+cJ57Te3CNsmzblwtzakLGFqHPqrfb4Tw==
 
-"@joshbuddy/go-npm@0.2.0":
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/@joshbuddy/go-npm/-/go-npm-0.2.0.tgz#346332be64bed4870ecfb7d0e8fb362708aab1b5"
-  integrity sha512-2ljn3wX7MgGiDCRP7iAPOHFgy+sGXcq77GTQ2+Rbm0FVvMjOCaQnuJoOFbG62lrID8MkeEtMs3lEgQ76POlpoQ==
+"@joshbuddy/go-npm@0.2.2":
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/@joshbuddy/go-npm/-/go-npm-0.2.2.tgz#996c18b53505853f0e4d9c706450febb13621b5e"
+  integrity sha512-it1ux6Mf++Geukhq8kFq0ikt/ZzSTV5/7BrF9rKpkdh/IwJpnsiruzHfAcpZE4qjt67mFpqOwB0JIdSUtTEBzQ==
   dependencies:
     mkdirp "^1.0.4"
     request "^2.88.2"
@@ -350,7 +329,7 @@ chainsaw@~0.1.0:
   optionalDependencies:
     fsevents "~2.3.2"
 
-classnames@^2.3.0, classnames@^2.3.1:
+classnames@^2.3.1:
   version "2.5.1"
   resolved "https://registry.yarnpkg.com/classnames/-/classnames-2.5.1.tgz#ba774c614be0f016da105c858e7159eae8e7687b"
   integrity sha512-saHYOzhIQs6wy2sVxTM6bUDsQO4F50V9RQ22qBpEdCW+I+/Wmke2HOl6lS6dTpdxVhb88/I6+Hs+438c3lfUow==
@@ -915,14 +894,6 @@ react-is@^16.13.1:
   version "16.13.1"
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.13.1.tgz#789729a4dc36de2999dc156dd6c1d9c18cea56a4"
   integrity sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==
-
-react-tooltip@^5.25.0:
-  version "5.26.0"
-  resolved "https://registry.yarnpkg.com/react-tooltip/-/react-tooltip-5.26.0.tgz#340d054cf952c43c2442f3af24bfc5c2b81fa80a"
-  integrity sha512-UBbwy3fo1KYDwRCOWwM6AEfQsk9shgVfNkXFqgwS33QHplzg7xao/7mX/6wd+lE6KSZzhUNTkB5TNk9SMaBV/A==
-  dependencies:
-    "@floating-ui/dom" "^1.0.0"
-    classnames "^2.3.0"
 
 react@^18.2:
   version "18.2.0"
