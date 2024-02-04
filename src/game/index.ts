@@ -33,6 +33,57 @@ export class PowergridBoard extends Board<PowergridPlayer, PowergridBoard> {
   lastBid?: number;
   playerWithHighestBid?: PowergridPlayer;
   noMoreUranium = false;
+  income = [10, 22, 33, 44, 54, 64, 73, 82, 90, 98, 105, 112, 118, 124, 129, 134, 138, 142, 145, 148, 150];
+
+  step2Score() {
+    return this.game.players.length < 6 ? 7 : 6;
+  }
+
+  victory() {
+    return [18, 17, 17, 15, 14][this.game.players.length - 2];
+  }
+
+  refill(step: number, resource: ResourceType) {
+    switch(resource) {
+    case 'coal':
+      return [
+        [3, 4, 3],
+        [3, 4, 3],
+        [4, 5, 3],
+        [5, 6, 4],
+        [5, 7, 5],
+        [7, 9, 6],
+      ][this.game.players.length - 1][step - 1];
+    case 'oil':
+      return [
+        [2, 2, 4],
+        [2, 2, 4],
+        [2, 3, 4],
+        [3, 4, 5],
+        [4, 5, 6],
+        [5, 6, 7],
+      ][this.game.players.length - 1][step - 1];
+    case 'garbage':
+      return [
+        [1, 2, 3],
+        [1, 2, 3],
+        [1, 2, 3],
+        [2, 3, 4],
+        [3, 3, 5],
+        [3, 5, 6],
+      ][this.game.players.length - 1][step - 1];
+    case 'uranium':
+      return [
+        [1, 1, 1],
+        [1, 1, 1],
+        [1, 1, 1],
+        [1, 2, 2],
+        [2, 3, 2],
+        [2, 3, 3],
+      ][this.game.players.length - 1][step - 1];
+    }
+  };
+
 
   sortPlayers(direction: 'asc' | 'desc') {
     this.game.players.sortBy([
@@ -126,44 +177,6 @@ export class PlayerMat extends Space {
 export class Building extends Piece {
   powered?: boolean = false;
 }
-
-const refill = {
-  coal: [
-    [3, 4, 3],
-    [3, 4, 3],
-    [4, 5, 3],
-    [5, 6, 4],
-    [5, 7, 5],
-    [7, 9, 6],
-  ],
-  oil: [
-    [2, 2, 4],
-    [2, 2, 4],
-    [2, 3, 4],
-    [3, 4, 5],
-    [4, 5, 6],
-    [5, 6, 7],
-  ],
-  garbage: [
-    [1, 2, 3],
-    [1, 2, 3],
-    [1, 2, 3],
-    [2, 3, 4],
-    [3, 3, 5],
-    [3, 5, 6],
-  ],
-  uranium: [
-    [1, 1, 1],
-    [1, 1, 1],
-    [1, 1, 1],
-    [1, 2, 2],
-    [2, 3, 2],
-    [2, 3, 3],
-  ],
-};
-
-const income = [10, 22, 33, 44, 54, 64, 73, 82, 90, 98, 105, 112, 118, 124, 129, 134, 138, 142, 145, 148, 150];
-const victory = [18, 17, 17, 15, 14];
 
 export default createGame(PowergridPlayer, PowergridBoard, game => {
 
@@ -377,6 +390,7 @@ export default createGame(PowergridPlayer, PowergridBoard, game => {
   game.defineActions({
     selectZone: () => action({
       prompt: 'Choose playing zone',
+      description: 'choosing playing zones',
     }).chooseOnBoard(
       'city', () => board.all(City, city => board.zones.length === 0 || board.all(City, c => (
         !board.zones.includes(c.zone) &&
@@ -388,6 +402,7 @@ export default createGame(PowergridPlayer, PowergridBoard, game => {
 
     auction: () => action({
       prompt: 'Choose a factory for auction',
+      description: 'choosing a factory for auction',
       condition: !board.has(Card, {auction: true}),
     }).chooseOnBoard(
       'card', powerplants.firstN(board.step === 3 ? 8 : 4, Card)
@@ -398,6 +413,7 @@ export default createGame(PowergridPlayer, PowergridBoard, game => {
     ),
 
     bid: player => action({
+      description: 'bidding',
       condition: !player.passedThisAuction
     }).chooseNumber('bid', {
       min: board.lastBid ? board.lastBid + 1 : board.first(Card, {auction: true})?.purchaseCost(),
@@ -430,6 +446,7 @@ export default createGame(PowergridPlayer, PowergridBoard, game => {
 
     scrap: player => action({
       prompt: 'You must scrap one of your powerplants',
+      description: 'scrapping a powerplant',
     }).chooseOnBoard(
       'card', player.allMy(Card)
     ).do(({ card }) => {
@@ -447,7 +464,8 @@ export default createGame(PowergridPlayer, PowergridBoard, game => {
     pass: () => action({ prompt: 'Done' }),
 
     build: player => action({
-      prompt: 'Select cities for building'
+      prompt: 'Select cities for building',
+      description: 'selecting cities for building'
     }).chooseOnBoard(
       'city', map.all(City, city => city.canBuildFor(player.elektro)),
       {
@@ -477,6 +495,7 @@ export default createGame(PowergridPlayer, PowergridBoard, game => {
 
     power: player => action({
       prompt: 'Power your plants',
+      description: 'powering plants',
       condition: map.has(Building, {player, powered: false})
     }).chooseOnBoard(
       'card', player.allMy(Card, c => !c.powered && !!c.resourcesAvailableToPower()), {
@@ -500,7 +519,8 @@ export default createGame(PowergridPlayer, PowergridBoard, game => {
     }),
 
     buyResource: player => action({
-      prompt: 'Buy resources'
+      prompt: 'Buy resources',
+      description: 'buying resources'
     }).chooseGroup({
       coal: ['number', {
         prompt: 'Buy Coal',
@@ -704,7 +724,7 @@ export default createGame(PowergridPlayer, PowergridBoard, game => {
 
       () => {
         board.phase = 'power';
-        if (game.players.max('score') >= victory[game.players.length - 2]) {
+        if (game.players.max('score') >= board.victory()) {
           game.message("Final power phase!");
         }
       },
@@ -730,11 +750,11 @@ export default createGame(PowergridPlayer, PowergridBoard, game => {
             // count power from plants and number of cities that can be powered
             powerPlayer.cities = Math.min(
               powerPlayer.allMy(Building, { powered: true }).length,
-              income.length - 1,
+              board.income.length - 1,
             )
 
-            if (game.players.max('score') < victory[game.players.length - 2]) {
-              const rev = income[powerPlayer.cities];
+            if (game.players.max('score') < board.victory()) {
+              const rev = board.income[powerPlayer.cities];
               powerPlayer.elektro += rev;
               game.message(`${powerPlayer} earned ${rev} elektro for ${powerPlayer.cities} ${powerPlayer.cities === 1 ? 'city' : 'cities'}`);
 
@@ -748,21 +768,20 @@ export default createGame(PowergridPlayer, PowergridBoard, game => {
         ]
       }),
       () => {
-        const step2Score = game.players.length < 6 ? 7 : 6;
-        if (board.step === 1 && game.players.max('score') >= step2Score) {
+        if (board.step === 1 && game.players.max('score') >= board.step2Score()) {
           game.message('Step 2 has begun!');
           board.step = 2;
           game.addDelay();
           powerplants.first(Card)?.remove();
           board.first('deck')!.top(Card)?.putInto(powerplants);
         }
-        if (game.players.max('score') >= victory[game.players.length - 2]) {
+        if (game.players.max('score') >= board.victory()) {
           const winner = game.players.withHighest('cities', 'elektro');
           game.message(`${winner} wins with ${winner.cities} powered cities!`)
           game.finish(winner);
         } else {
           for (const r of resourceTypes) {
-            board.refillResources(r, refill[r][game.players.length - 1][board.step - 1]);
+            board.refillResources(r, board.refill(board.step, r));
           }
           game.message('Resources have been resupplied');
 

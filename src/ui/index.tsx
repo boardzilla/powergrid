@@ -403,6 +403,7 @@ render(setup, {
         element: $.powerplants,
         right: 60,
         top: 35,
+        width: 35
       });
 
       board.layoutStep('purchaseResources', {
@@ -435,12 +436,6 @@ render(setup, {
         left: 2,
       });
 
-      board.layoutStep('out-of-turn', {
-        element: board,
-        top: 2,
-        left: 1.4,
-      });
-
     } else {
 
       board.layoutStep('auction', {
@@ -449,5 +444,66 @@ render(setup, {
         top: 100,
       });
     }
-  }
+  },
+
+  infoModals: [
+    {
+      title: 'Score threshholds',
+      modal: board => (
+        <table className="small">
+          <tr>
+            <th>Event</th><th>Score</th>
+          </tr>
+          <tr>
+            <td>Step 2</td><td>{board.step2Score()}</td>
+          </tr>
+          <tr>
+            <td>Last round</td><td>{board.victory()}</td>
+          </tr>
+        </table>
+      )
+    },
+
+    {
+      title: 'Income By Cities',
+      modal: board => (
+        <table className="split">
+          <tr>
+            <th>Cities</th><th>Income</th>
+            <th>Cities</th><th>Income</th>
+            <th>Cities</th><th>Income</th>
+            <th>Cities</th><th>Income</th>
+          </tr>
+          {times(5, cities => (
+            <tr key={cities}>
+              <td>{cities}</td><td>{board.income[cities]}</td>
+              <td>{cities + 5}</td><td>{board.income[cities + 5]}</td>
+              <td>{cities + 10}</td><td>{board.income[cities + 10]}</td>
+              <td>{cities + 15}</td><td>{board.income[cities + 15]}</td>
+            </tr>
+          ))}
+        </table>
+      )
+    },
+
+    {
+      title: 'Resource refill amounts',
+      modal: board => (
+        <table>
+          <tr>
+            <th/><th>Coal</th><th>Oil</th><th>Garbage</th><th>Uranium</th>
+          </tr>
+          {times(3, step => (
+            <tr>
+              <td>Step {step}</td>
+              <td>{board.refill(step, 'coal')}</td>
+              <td>{board.refill(step, 'oil')}</td>
+              <td>{board.refill(step, 'garbage')}</td>
+              <td>{board.refill(step, 'uranium')}</td>
+            </tr>
+          ))}
+        </table>
+      )
+    }
+  ]
 });

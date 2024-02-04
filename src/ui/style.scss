@@ -109,10 +109,11 @@ body {
     }
     .out-of-zone {
       filter: contrast(0.2) brightness(1.5);
-      #game[data-step="selectZone"] & {
-        filter: none;
-      }
     }
+  }
+
+  &[data-step="selectZone"] #germany .out-of-zone {
+    filter: none;
   }
 
   #powerplants {
@@ -396,6 +397,9 @@ body {
   &.step-auction, &.step-bid, &.step-purchaseResources {
     text-align: right;
   }
+}
+
+.player-controls, #info-drawer {
   button, label {
     padding: .1rem .2rem;
     border-width: 0;
@@ -403,6 +407,39 @@ body {
     text-shadow: .1em .1em 0 #fff5;
     box-shadow: .1em .1em .2em #0008, inset .1em .1em 0 #fff9;
     background: linear-gradient(to bottom, #dcd,  #aab 85%, #cce);
+  }
+}
+
+#info-modal {
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    th {
+      border-bottom: .1rem solid black;
+    }
+    th, td {
+      padding: .1rem .2rem;
+      text-align: center;
+    }
+    tr:nth-child(even) {
+      background: #ccc;
+    }
+
+    &.small {
+      width: 10rem;
+    }
+
+    &.split {
+      th:nth-child(even) {
+        padding-right: 2.5rem;
+      }
+      td:nth-child(odd) {
+        text-align: right;
+      }
+      td:nth-child(even) {
+        text-align: left;
+      }
+    }
   }
 }
 

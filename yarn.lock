@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@boardzilla/core@^0.0.71":
-  version "0.0.71"
-  resolved "https://registry.yarnpkg.com/@boardzilla/core/-/core-0.0.71.tgz#8ddf6aa43b0b289ade2bde004541a6beb1f2e7a4"
-  integrity sha512-3G1VFXO8ZHllQOUJrD57CU0JkJOXSG6eym4d0be2tevWoak4gxLe+PULZZaabwhTqh0QPQCaKlVN6ufNdgzL9g==
+"@boardzilla/core@^0.0.78":
+  version "0.0.78"
+  resolved "https://registry.yarnpkg.com/@boardzilla/core/-/core-0.0.78.tgz#f7fbc6853972cdd2c5e231633c966996aa9045c2"
+  integrity sha512-KbtPF082ZFSN/SvkUP0GsJNoFWRkpJdBYLsUm8/ewipvn8SsWoEzh8CwXOpEIcSp7UGlftpr+oqGUZsKokbo/g==
   dependencies:
     classnames "^2.3.1"
     graphology "^0.25.4"
@@ -20,10 +20,10 @@
     uuid-random "^1.3.2"
     zustand "^4.4.0"
 
-"@boardzilla/devtools@^0.0.63":
-  version "0.0.63"
-  resolved "https://registry.yarnpkg.com/@boardzilla/devtools/-/devtools-0.0.63.tgz#3bbc7a29b9713dc9ff48f5f80a6127de5fe73e0e"
-  integrity sha512-kbQxV20C7Zy1FYDWWnj7+sy/jlBYUPVJkjMAgTcibSVQpZxgsqaufuTq2uglmItw3pINJXRjb2/8TSAI7grIOA==
+"@boardzilla/devtools@^0.0.65":
+  version "0.0.65"
+  resolved "https://registry.yarnpkg.com/@boardzilla/devtools/-/devtools-0.0.65.tgz#1d9ae042b8862111a02a2afc48efc51a6aa176b2"
+  integrity sha512-8OnQitU5os/bnOgZ2/h/FS7Jf3SADtdAKlvFRo6Tu2n6EZTHIRoCirW3vfllWei16+ALeRuyyv8u8EELtzn4nw==
   dependencies:
     "@joshbuddy/go-npm" "0.2.2"
 
@@ -772,9 +772,9 @@ mkdirp@^1.0.4:
   integrity sha512-vVqVZQyf3WLx2Shd0qJ9xuvqgAyKPLAiqITEtqW0oIUjzo3PePDd6fW9iFz30ef7Ysp/oiWqbhszeGWW2T6Gzw==
 
 mnemonist@^0.39.0:
-  version "0.39.7"
-  resolved "https://registry.yarnpkg.com/mnemonist/-/mnemonist-0.39.7.tgz#712eebb827a31c83c9711f17d6256d2670c87a30"
-  integrity sha512-ix3FwHWZgdXUt0dHM8bCrI4r1KMeYx8bCunPCYmvKXq4tn6gbNsqrsb4q0kDbDqbpIOvEaW5Sn+dmDwGydfrwA==
+  version "0.39.8"
+  resolved "https://registry.yarnpkg.com/mnemonist/-/mnemonist-0.39.8.tgz#9078cd8386081afd986cca34b52b5d84ea7a4d38"
+  integrity sha512-vyWo2K3fjrUw8YeeZ1zF0fy6Mu59RHokURlld8ymdUPjMlD9EC9ov1/YPqTgqRvUN9nTr3Gqfz29LYAmu0PHPQ==
   dependencies:
     obliterator "^2.0.1"
 
