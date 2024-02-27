@@ -56,8 +56,8 @@ render(setup, {
     aspectRatio: 8 / 5,
   },
 
-  layout: (board, _player, boardSize) => {
-    const map = board.first(Space)!;
+  layout: (game, _player, boardSize) => {
+    const map = game.first(Space)!;
 
     const resourceSvgs = {
       coal: coalOutline,
@@ -70,47 +70,47 @@ render(setup, {
 
     if (boardSize === 'desktop') {
       let area = { left: 2.4, top: -10, width: 45, height: 120 };
-      const zones = board.zones.sort().join('-');
+      const zones = game.zones.sort().join('-');
       if (zones === 'blue-purple-yellow') area = { left: 1, top: -30, width: 51, height: 136 };
       if (zones === 'blue-red-yellow') area = { left: 1, top: -18, width: 51, height: 136 };
       if (zones === 'brown-green-red') area = { left: 1, top: 0, width: 51, height: 136 };
       if (zones === 'blue-green-red') area = { left: 2.5, top: -14, width: 54, height: 144 };
 
-      board.layout(map, { area });
-      board.layout(board.all(PlayerMat, { mine: false }), {
+      game.layout(map, { area });
+      game.layout(game.all(PlayerMat, { mine: false }), {
         area: { left: 50, top: 0, width: 50, height: 20 },
       });
-      board.layout($.powerplants, {
+      game.layout($.powerplants, {
         area: { left: 50, top: 20, width: 40, height: 20 },
       });
-      board.layout($.deck, {
+      game.layout($.deck, {
         area: { left: 90, top: 20, width: 10, height: 20 },
       });
-      board.layout($.resources, {
+      game.layout($.resources, {
         area: { left: 50, top: 40, width: 50, height: 40 },
       });
-      board.layout(board.all(PlayerMat, { mine: true }), {
+      game.layout(game.all(PlayerMat, { mine: true }), {
         area: { left: 50, top: 80, width: 50, height: 20 },
       });
 
     } else {
 
-      board.layout(map, {
+      game.layout(map, {
         area: { left: 0, top: 9, width: 100, height: 76 }
       });
-      board.layout(board.all(PlayerMat, { mine: false }), {
+      game.layout(game.all(PlayerMat, { mine: false }), {
         area: { left: 0, top: 0, width: 100, height: 15 },
       });
-      board.layout($.powerplants, {
+      game.layout($.powerplants, {
         area: { left: 0, top: 15, width: 30, height: 8 },
       });
-      board.layout($.deck, {
+      game.layout($.deck, {
         area: { left: 90, top: 15, width: 10, height: 5 },
       });
-      board.layout($.resources, {
+      game.layout($.resources, {
         area: { left: 0, top: 78, width: 100, height: 7 },
       });
-      board.layout(board.all(PlayerMat, { mine: true }), {
+      game.layout(game.all(PlayerMat, { mine: true }), {
         area: { left: 0, top: 85, width: 100, height: 15 },
       });
     }
@@ -166,7 +166,7 @@ render(setup, {
         { top: 74, left: 78, width: 8, height: 8 },
       ]
     });
-    board.all(City).layout(Building, {
+    game.all(City).layout(Building, {
       slots: [
         { top: 5, left: 30, width: 40, height: 40 },
         { top: 35, left: 5, width: 40, height: 40 },
@@ -234,7 +234,7 @@ render(setup, {
       });
     }
 
-    board.all(PlayerMat).layout(Card, {
+    game.all(PlayerMat).layout(Card, {
       area: { top: 10, left: 30, width: 65, height: 80 },
       gap: 0.5,
       columns: 3,
@@ -250,24 +250,24 @@ render(setup, {
       limit: 3
     });
 
-    board.all(Card).layout(Resource, {
+    game.all(Card).layout(Resource, {
       area: { left: 10, top: 25, width: 80, height: 50 },
       gap: 0.5,
     });
 
-    board.disableDefaultAppearance();
+    game.disableDefaultAppearance();
 
-    board.appearance({
+    game.appearance({
       render: () => (
         <>
           <div id="step-phase">
-            Step {board.step}<br/>
-            {board.phase === 'auction' && <img src={gavel}/>}
-            {board.phase === 'resources' && <img src={resourceBuying}/>}
-            {board.phase === 'build' && <img src={buildingFill}/>}
-            {board.phase === 'power' && <img src={socket}/>}
+            Step {game.step}<br/>
+            {game.phase === 'auction' && <img src={gavel}/>}
+            {game.phase === 'resources' && <img src={resourceBuying}/>}
+            {game.phase === 'build' && <img src={buildingFill}/>}
+            {game.phase === 'power' && <img src={socket}/>}
             <div id="turn-markers">
-              {board.game.players.map(p => <div key={p.position} className="turn-marker" style={{background: p.color}}/>)}
+              {game.game.players.map(p => <div key={p.position} className="turn-marker" style={{background: p.color}}/>)}
             </div>
           </div>
           <div id="sea"/>
@@ -276,7 +276,7 @@ render(setup, {
       )
     });
 
-    board.all(PlayerMat).appearance({
+    game.all(PlayerMat).appearance({
       aspectRatio: 4,
       render: mat => (
         <>
@@ -299,26 +299,26 @@ render(setup, {
       }
     });
 
-    board.all(ResourceSpace).appearance({
+    game.all(ResourceSpace).appearance({
       render: s => <div className={'cost' + (s.isEmpty() ? ' empty' : '')}>{s.cost}</div>
     });
 
-    board.all(Resource).appearance({ aspectRatio: 1 });
-    board.all(Resource, {type: 'coal'}).appearance({ render: () => <img src={coal}/> });
-    board.all(Resource, {type: 'oil'}).appearance({ render: () => <img src={oil}/> });
-    board.all(Resource, {type: 'garbage'}).appearance({ render: () => <img src={garbage}/> });
-    board.all(Resource, {type: 'uranium'}).appearance({ render: () => <img src={uranium}/> });
+    game.all(Resource).appearance({ aspectRatio: 1 });
+    game.all(Resource, {type: 'coal'}).appearance({ render: () => <img src={coal}/> });
+    game.all(Resource, {type: 'oil'}).appearance({ render: () => <img src={oil}/> });
+    game.all(Resource, {type: 'garbage'}).appearance({ render: () => <img src={garbage}/> });
+    game.all(Resource, {type: 'uranium'}).appearance({ render: () => <img src={uranium}/> });
 
-    board.all(City).appearance({
+    game.all(City).appearance({
       aspectRatio: 1,
       render: city => (
-        <div className={board.zones.includes(city.zone) ? '' : 'out-of-zone'}>
+        <div className={game.zones.includes(city.zone) ? '' : 'out-of-zone'}>
           {CitySVG(city)}
         </div>
       )
     });
 
-    board.all(Building).appearance({
+    game.all(Building).appearance({
       aspectRatio: 1,
       render: BuildingSVG,
       effects: [{
@@ -326,7 +326,7 @@ render(setup, {
         className: 'newly-powered',
       }]
     });
-    board.all(PlayerMat).all(Building).appearance({ render: false });
+    game.all(PlayerMat).all(Building).appearance({ render: false });
 
     $.deck.appearance({
       render: deck => <div className="count">{deck.all(Card).length}</div>
@@ -334,16 +334,16 @@ render(setup, {
 
     $.powerplants.appearance({
       render: () => {
-        if (board.phase === 'auction' && board.lastBid && board.playerWithHighestBid) return (
-          <div style={{background: board.playerWithHighestBid.color}} className="bid">
-            {board.playerWithHighestBid.name} high bid: {board.lastBid}
+        if (game.phase === 'auction' && game.lastBid && game.playerWithHighestBid) return (
+          <div style={{background: game.playerWithHighestBid.color}} className="bid">
+            {game.playerWithHighestBid.name} high bid: {game.lastBid}
           </div>
         );
         return null;
       }
     })
 
-    board.all(Card).appearance({
+    game.all(Card).appearance({
       aspectRatio: 1,
       info: card => card.isVisible() ? <p>Power {card.power} cit{card.power === 1 ? 'y' : 'ies'} for {card.resources ? card.resources + ' ' + card.resourceType : 'free'}</p> : false,
       render: card => (
@@ -386,59 +386,59 @@ render(setup, {
     });
 
     if (boardSize === 'desktop') {
-      board.layoutStep('selectZone', {
-        element: board,
+      game.layoutStep('selectZone', {
+        element: game,
         right: 51,
         top: 1,
       });
 
-      board.layoutStep('auction', {
+      game.layoutStep('auction', {
         element: $.powerplants,
         right: 60,
         top: 10,
         width: 35
       });
 
-      board.layoutStep('bid', {
+      game.layoutStep('bid', {
         element: $.powerplants,
         right: 60,
         top: 35,
         width: 35
       });
 
-      board.layoutStep('purchaseResources', {
+      game.layoutStep('purchaseResources', {
         element: $.resources,
         right: 66.6,
         top: 6,
       });
 
-      board.layoutStep('build', {
-        element: board,
+      game.layoutStep('build', {
+        element: game,
         top: 2,
         left: 1.25,
       });
 
-      board.layoutStep('arrange', {
-        element: board.first(PlayerMat, { mine: true })!,
+      game.layoutStep('arrange', {
+        element: game.first(PlayerMat, { mine: true })!,
         bottom: 100,
         left: 2,
       });
 
-      board.layoutStep('power', {
-        element: board.first(PlayerMat, { mine: true })!,
+      game.layoutStep('power', {
+        element: game.first(PlayerMat, { mine: true })!,
         bottom: 100,
         left: 2,
       });
 
-      board.layoutStep('scrap', {
-        element: board.first(PlayerMat, { mine: true })!,
+      game.layoutStep('scrap', {
+        element: game.first(PlayerMat, { mine: true })!,
         bottom: 100,
         left: 2,
       });
 
     } else {
 
-      board.layoutStep('auction', {
+      game.layoutStep('auction', {
         element: $.powerplants,
         left: 0,
         top: 100,
@@ -449,16 +449,16 @@ render(setup, {
   infoModals: [
     {
       title: 'Score threshholds',
-      modal: board => (
+      modal: game => (
         <table className="small">
           <tr>
             <th>Event</th><th>Score</th>
           </tr>
           <tr>
-            <td>Step 2</td><td>{board.step2Score()}</td>
+            <td>Step 2</td><td>{game.step2Score()}</td>
           </tr>
           <tr>
-            <td>Last round</td><td>{board.victory()}</td>
+            <td>Last round</td><td>{game.victory()}</td>
           </tr>
         </table>
       )
@@ -466,7 +466,7 @@ render(setup, {
 
     {
       title: 'Income By Cities',
-      modal: board => (
+      modal: game => (
         <table className="split">
           <tr>
             <th>Cities</th><th>Income</th>
@@ -476,10 +476,10 @@ render(setup, {
           </tr>
           {times(5, cities => (
             <tr key={cities}>
-              <td>{cities}</td><td>{board.income[cities]}</td>
-              <td>{cities + 5}</td><td>{board.income[cities + 5]}</td>
-              <td>{cities + 10}</td><td>{board.income[cities + 10]}</td>
-              <td>{cities + 15}</td><td>{board.income[cities + 15]}</td>
+              <td>{cities}</td><td>{game.income[cities]}</td>
+              <td>{cities + 5}</td><td>{game.income[cities + 5]}</td>
+              <td>{cities + 10}</td><td>{game.income[cities + 10]}</td>
+              <td>{cities + 15}</td><td>{game.income[cities + 15]}</td>
             </tr>
           ))}
         </table>
@@ -488,7 +488,7 @@ render(setup, {
 
     {
       title: 'Resource refill amounts',
-      modal: board => (
+      modal: game => (
         <table>
           <tr>
             <th/><th>Coal</th><th>Oil</th><th>Garbage</th><th>Uranium</th>
@@ -496,10 +496,10 @@ render(setup, {
           {times(3, step => (
             <tr>
               <td>Step {step}</td>
-              <td>{board.refill(step, 'coal')}</td>
-              <td>{board.refill(step, 'oil')}</td>
-              <td>{board.refill(step, 'garbage')}</td>
-              <td>{board.refill(step, 'uranium')}</td>
+              <td>{game.refill(step, 'coal')}</td>
+              <td>{game.refill(step, 'oil')}</td>
+              <td>{game.refill(step, 'garbage')}</td>
+              <td>{game.refill(step, 'uranium')}</td>
             </tr>
           ))}
         </table>
