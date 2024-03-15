@@ -5,16 +5,17 @@
 
 import {
   createGame,
-  createGameClasses,
   Player,
   Game,
+  Space,
+  Piece,
   Do,
   union,
 } from '@boardzilla/core';
 
 import { cards } from './cards.js';
 
-export class PowergridPlayer extends Player<PowergridPlayer, Powergrid> {
+export class PowergridPlayer extends Player<Powergrid, PowergridPlayer> {
   score: number = 0;
   elektro: number = 50;
   cities: number = 0;
@@ -25,7 +26,7 @@ export class PowergridPlayer extends Player<PowergridPlayer, Powergrid> {
 type ResourceType = 'coal' | 'oil' | 'garbage' | 'uranium'
 const resourceTypes: ResourceType[] = ['coal', 'oil', 'garbage', 'uranium'];
 
-export class Powergrid extends Game<PowergridPlayer, Powergrid> {
+export class Powergrid extends Game<Powergrid, PowergridPlayer> {
   step: number = 1;
   phase: 'auction' | 'resources' | 'build' | 'power' = 'auction';
   turn: number = 0;
@@ -36,11 +37,11 @@ export class Powergrid extends Game<PowergridPlayer, Powergrid> {
   income = [10, 22, 33, 44, 54, 64, 73, 82, 90, 98, 105, 112, 118, 124, 129, 134, 138, 142, 145, 148, 150];
 
   step2Score() {
-    return this.game.players.length < 6 ? 7 : 6;
+    return this.players.length < 6 ? 7 : 6;
   }
 
   victory() {
-    return [18, 17, 17, 15, 14][this.game.players.length - 2];
+    return [18, 17, 17, 15, 14][this.players.length - 2];
   }
 
   refill(step: number, resource: ResourceType) {
@@ -53,7 +54,7 @@ export class Powergrid extends Game<PowergridPlayer, Powergrid> {
         [5, 6, 4],
         [5, 7, 5],
         [7, 9, 6],
-      ][this.game.players.length - 1][step - 1];
+      ][this.players.length - 1][step - 1];
     case 'oil':
       return [
         [2, 2, 4],
@@ -62,7 +63,7 @@ export class Powergrid extends Game<PowergridPlayer, Powergrid> {
         [3, 4, 5],
         [4, 5, 6],
         [5, 6, 7],
-      ][this.game.players.length - 1][step - 1];
+      ][this.players.length - 1][step - 1];
     case 'garbage':
       return [
         [1, 2, 3],
@@ -71,7 +72,7 @@ export class Powergrid extends Game<PowergridPlayer, Powergrid> {
         [2, 3, 4],
         [3, 3, 5],
         [3, 5, 6],
-      ][this.game.players.length - 1][step - 1];
+      ][this.players.length - 1][step - 1];
     case 'uranium':
       return [
         [1, 1, 1],
@@ -80,13 +81,13 @@ export class Powergrid extends Game<PowergridPlayer, Powergrid> {
         [1, 2, 2],
         [2, 3, 2],
         [2, 3, 3],
-      ][this.game.players.length - 1][step - 1];
+      ][this.players.length - 1][step - 1];
     }
   };
 
 
   sortPlayers(direction: 'asc' | 'desc') {
-    this.game.players.sortBy([
+    this.players.sortBy([
       'score',
       player => player.allMy(Card).max('cost') || 0
     ], direction);
@@ -94,9 +95,9 @@ export class Powergrid extends Game<PowergridPlayer, Powergrid> {
 
   applyMinimumRule() {
     for (const card of $.powerplants.all(Card)) {
-      if (card.cost <= this.game.players.max('score')) {
-        this.game.message('{{card}} is below the minimum and is discarded', {card});
-        this.game.addDelay();
+      if (card.cost <= this.players.max('score')) {
+        this.message('{{card}} is below the minimum and is discarded', {card});
+        this.addDelay();
         card.remove();
         $.deck.top(Card)?.putInto($.powerplants);
       }
@@ -111,11 +112,7 @@ export class Powergrid extends Game<PowergridPlayer, Powergrid> {
   }
 }
 
-const {Space, Piece} = createGameClasses<PowergridPlayer, Powergrid>();
-
-export {Space};
-
-export class Card extends Piece {
+export class Card extends Piece<Powergrid> {
   cost: number;
   resourceType?: ResourceType | 'hybrid' | 'clean';
   resources?: number;
@@ -141,16 +138,16 @@ export class Card extends Piece {
   }
 }
 
-export class Resource extends Piece {
+export class Resource extends Piece<Powergrid> {
   type: ResourceType;
 }
 
-export class ResourceSpace extends Space {
+export class ResourceSpace extends Space<Powergrid> {
   resource: ResourceType;
   cost: number;
 }
 
-export class City extends Space {
+export class City extends Space<Powergrid> {
   owners: PowergridPlayer[] = [];
   zone: string
 
@@ -170,11 +167,11 @@ export class City extends Space {
   }
 }
 
-export class PlayerMat extends Space {
+export class PlayerMat extends Space<Powergrid> {
   player: PowergridPlayer
 }
 
-export class Building extends Piece {
+export class Building extends Piece<Powergrid> {
   powered?: boolean = false;
 }
 
@@ -331,7 +328,7 @@ export default createGame(PowergridPlayer, Powergrid, game => {
     .connectTo(regensburg, 12)
     .connectTo(munchen, 14)
 
-  const resources = game.create(Space, 'resources');
+  const resources = game.create(Space<Powergrid>, 'resources');
   for (let cost = 1; cost <= 8; cost++) {
     resources.createMany(3, ResourceSpace, `coal-${cost}`, { cost, resource: 'coal' });
     resources.createMany(3, ResourceSpace, `oil-${cost}`, { cost, resource: 'oil' });
@@ -347,7 +344,7 @@ export default createGame(PowergridPlayer, Powergrid, game => {
   powerplants.onEnter(Card, c => {
     c.showToAll();
     game.applyMinimumRule();
-    powerplants.sortBy<Card>('cost');
+    powerplants.sortBy('cost');
     const discount = powerplants.first(Card, { discount: true });
     if (discount && powerplants.first(Card) !== discount) {
       game.message('Removing discount because of a lower power plant');
