@@ -4,11 +4,11 @@ import {
   render,
   times,
   ProfileBadge,
+  ConnectedSpaceMap,
 } from '@boardzilla/core';
 
 import {
   default as setup,
-  Space,
   Card,
   PlayerMat,
   City,
@@ -57,7 +57,7 @@ render(setup, {
   },
 
   layout: (game, _player, boardSize) => {
-    const map = game.first(Space)!;
+    const map = game.first(ConnectedSpaceMap)!;
 
     const resourceSvgs = {
       coal: coalOutline,
@@ -115,7 +115,7 @@ render(setup, {
       });
     }
 
-    map.layout(City, {
+    map.configureLayout({
       slots: [
         { top: 20, left: 28, width: 8, height: 8 },
         { top: 27, left: 31, width: 8, height: 8 },
@@ -323,7 +323,7 @@ render(setup, {
       render: BuildingSVG,
       effects: [{
         attributes: { powered: true },
-        className: 'newly-powered',
+        name: 'newly-powered',
       }]
     });
     game.all(PlayerMat).all(Building).appearance({ render: false });

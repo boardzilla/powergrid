@@ -7,7 +7,9 @@
     "noImplicitAny": true,
     "strictNullChecks": true,
     "jsx": "react",
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "incremental": true
   },
   "include": ["src/game", "src/ui", "./src/index.d.ts"],
   "exclude": ["**/node_modules", "**/.*/"]

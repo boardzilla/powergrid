@@ -5,16 +5,18 @@
 
 import {
   createGame,
-  createGameClasses,
   Player,
   Game,
+  Space,
+  ConnectedSpaceMap,
+  Piece,
   Do,
   union,
 } from '@boardzilla/core';
 
 import { cards } from './cards.js';
 
-export class PowergridPlayer extends Player<PowergridPlayer, Powergrid> {
+export class PowergridPlayer extends Player<Powergrid, PowergridPlayer> {
   score: number = 0;
   elektro: number = 50;
   cities: number = 0;
@@ -25,7 +27,7 @@ export class PowergridPlayer extends Player<PowergridPlayer, Powergrid> {
 type ResourceType = 'coal' | 'oil' | 'garbage' | 'uranium'
 const resourceTypes: ResourceType[] = ['coal', 'oil', 'garbage', 'uranium'];
 
-export class Powergrid extends Game<PowergridPlayer, Powergrid> {
+export class Powergrid extends Game<Powergrid, PowergridPlayer> {
   step: number = 1;
   phase: 'auction' | 'resources' | 'build' | 'power' = 'auction';
   turn: number = 0;
@@ -111,11 +113,7 @@ export class Powergrid extends Game<PowergridPlayer, Powergrid> {
   }
 }
 
-const {Space, Piece} = createGameClasses<PowergridPlayer, Powergrid>();
-
-export {Space};
-
-export class Card extends Piece {
+export class Card extends Piece<Powergrid> {
   cost: number;
   resourceType?: ResourceType | 'hybrid' | 'clean';
   resources?: number;
@@ -141,21 +139,21 @@ export class Card extends Piece {
   }
 }
 
-export class Resource extends Piece {
+export class Resource extends Piece<Powergrid> {
   type: ResourceType;
 }
 
-export class ResourceSpace extends Space {
+export class ResourceSpace extends Space<Powergrid> {
   resource: ResourceType;
   cost: number;
 }
 
-export class City extends Space {
+export class City extends Space<Powergrid> {
   owners: PowergridPlayer[] = [];
   zone: string
 
   costToBuild() {
-    const closestCity = this.closest(City, city => city.has(Building, {mine: true}));
+    const closestCity = this.game.first(ConnectedSpaceMap)!.closestTo(this, City, city => city.has(Building, {mine: true}));
     return [10, 15, 20][this.owners.length] + (closestCity ? this.distanceTo(closestCity)! : 0);
   }
 
@@ -170,11 +168,11 @@ export class City extends Space {
   }
 }
 
-export class PlayerMat extends Space {
+export class PlayerMat extends Space<Powergrid> {
   player: PowergridPlayer
 }
 
-export class Building extends Piece {
+export class Building extends Piece<Powergrid> {
   powered?: boolean = false;
 }
 
@@ -189,147 +187,144 @@ export default createGame(PowergridPlayer, Powergrid, game => {
     eachPlayer,
   } = game.flowCommands;
 
-  game.registerClasses(
-    Card,
-    Resource,
-    ResourceSpace,
-    City,
-    Building,
-    PlayerMat
-  );
+  const map = game.create(ConnectedSpaceMap, 'germany');
 
-  const map = game.create(Space, 'germany');
-
-  const cuxhaven = map.create(City, 'Cuxhaven', {zone: 'green'})
+  const cuxhaven = map.create(City, 'Cuxhaven', {zone: 'green'});
   const bremen = map.create(City, 'Bremen', {zone: 'green'})
-    .connectTo(cuxhaven, 8)
-  const hannover = map.create(City, 'Hannover', {zone: 'green'})
-    .connectTo(bremen, 10)
-  const hamburg = map.create(City, 'Hamburg', {zone: 'green'})
-    .connectTo(cuxhaven, 11)
-    .connectTo(bremen, 11)
-    .connectTo(hannover, 17)
+  const hannover = map.create(City, 'Hannover', {zone: 'green'});
+  const hamburg = map.create(City, 'Hamburg', {zone: 'green'});
   const kiel = map.create(City, 'Kiel', {zone: 'green'})
-    .connectTo(hamburg, 8)
-  map.create(City, 'Flensburg', {zone: 'green'})
-    .connectTo(kiel, 4)
+  const flensburg = map.create(City, 'Flensburg', {zone: 'green'})
   const wilhelmshaven = map.create(City, 'Wilhelmshaven', {zone: 'green'})
-    .connectTo(bremen, 11)
+
+  map.connect(bremen, cuxhaven, 8);
+  map.connect(hannover, bremen, 10);
+  map.connect(hamburg, cuxhaven, 11);
+  map.connect(hamburg, bremen, 11);
+  map.connect(hamburg, hannover, 17);
+  map.connect(kiel, hamburg, 8)
+  map.connect(flensburg, kiel, 4)
+  map.connect(wilhelmshaven, bremen, 11)
 
   const osnabruck = map.create(City, 'Osnabruck', {zone: 'red'})
-    .connectTo(wilhelmshaven, 14)
-    .connectTo(bremen, 11)
-    .connectTo(hannover, 16)
   const munster = map.create(City, 'Münster', {zone: 'red'})
-    .connectTo(osnabruck, 7)
   const essen = map.create(City, 'Essen', {zone: 'red'})
-    .connectTo(munster, 6)
-  map.create(City, 'Duisberg', {zone: 'red'})
-    .connectTo(essen, 0)
+  const duisberg = map.create(City, 'Duisberg', {zone: 'red'})
   const dusseldorf = map.create(City, 'Dusseldorf', {zone: 'red'})
-    .connectTo(essen, 2)
   const dortmund = map.create(City, 'Dortmund', {zone: 'red'})
-    .connectTo(essen, 4)
-    .connectTo(munster, 2)
   const kassel = map.create(City, 'Kassel', {zone: 'red'})
-    .connectTo(hannover, 15)
-    .connectTo(osnabruck, 20)
-    .connectTo(dortmund, 18)
+
+  map.connect(osnabruck, wilhelmshaven, 14)
+  map.connect(osnabruck, bremen, 11)
+  map.connect(osnabruck, hannover, 16)
+  map.connect(munster, osnabruck, 7)
+  map.connect(essen, munster, 6)
+  map.connect(duisberg, essen, 0)
+  map.connect(dusseldorf, essen, 2)
+  map.connect(dortmund, essen, 4)
+  map.connect(dortmund, munster, 2)
+  map.connect(kassel, hannover, 15)
+  map.connect(kassel, osnabruck, 20)
+  map.connect(kassel, dortmund, 18)
 
   const lubeck = map.create(City, 'Lübeck', {zone: 'brown'})
-    .connectTo(kiel, 4)
-    .connectTo(hamburg, 6)
   const schwerin = map.create(City, 'Schwerin', {zone: 'brown'})
-    .connectTo(lubeck, 6)
-    .connectTo(hamburg, 8)
-    .connectTo(hannover, 19)
   const rostock = map.create(City, 'Rostock', {zone: 'brown'})
-    .connectTo(schwerin, 6)
   const torgelow = map.create(City, 'Torgelow', {zone: 'brown'})
-    .connectTo(rostock, 19)
-    .connectTo(schwerin, 19)
   const berlin = map.create(City, 'Berlin', {zone: 'brown'})
-    .connectTo(schwerin, 18)
-    .connectTo(torgelow, 15)
   const magdeburg = map.create(City, 'Magdeburg', {zone: 'brown'})
-    .connectTo(schwerin, 16)
-    .connectTo(hannover, 15)
-    .connectTo(berlin, 10)
   const frankfurto = map.create(City, 'Frankfurt-O', {zone: 'brown'})
-    .connectTo(berlin, 6)
+
+  map.connect(lubeck, kiel, 4)
+  map.connect(lubeck, hamburg, 6)
+  map.connect(schwerin, lubeck, 6)
+  map.connect(schwerin, hamburg, 8)
+  map.connect(schwerin, hannover, 19)
+  map.connect(rostock, schwerin, 6)
+  map.connect(torgelow, rostock, 19)
+  map.connect(torgelow, schwerin, 19)
+  map.connect(berlin, schwerin, 18)
+  map.connect(berlin, torgelow, 15)
+  map.connect(magdeburg, schwerin, 16)
+  map.connect(magdeburg, hannover, 15)
+  map.connect(magdeburg, berlin, 10)
+  map.connect(frankfurto, berlin, 6)
 
   const halle = map.create(City, 'Halle', {zone: 'yellow'})
-    .connectTo(magdeburg, 11)
-    .connectTo(berlin, 17)
   const leipzig = map.create(City, 'Leipzig', {zone: 'yellow'})
-    .connectTo(halle, 0)
-    .connectTo(frankfurto, 21)
   const dresden = map.create(City, 'Dresden', {zone: 'yellow'})
-    .connectTo(leipzig, 13)
-    .connectTo(frankfurto, 16)
   const erfurt = map.create(City, 'Erfurt', {zone: 'yellow'})
-    .connectTo(halle, 6)
-    .connectTo(hannover, 19)
-    .connectTo(kassel, 15)
-    .connectTo(dresden, 19)
   const fulda = map.create(City, 'Fulda', {zone: 'yellow'})
-    .connectTo(kassel, 8)
-    .connectTo(erfurt, 13)
   const wurzburg = map.create(City, 'Wurzburg', {zone: 'yellow'})
-    .connectTo(fulda, 11)
   const nurnberg = map.create(City, 'Nurnberg', {zone: 'yellow'})
-    .connectTo(wurzburg, 8)
-    .connectTo(erfurt, 21)
+
+  map.connect(halle, magdeburg, 11)
+  map.connect(halle, berlin, 17)
+  map.connect(leipzig, halle, 0)
+  map.connect(leipzig, frankfurto, 21)
+  map.connect(dresden, leipzig, 13)
+  map.connect(dresden, frankfurto, 16)
+  map.connect(erfurt, halle, 6)
+  map.connect(erfurt, hannover, 19)
+  map.connect(erfurt, kassel, 15)
+  map.connect(erfurt, dresden, 19)
+  map.connect(fulda, kassel, 8)
+  map.connect(fulda, erfurt, 13)
+  map.connect(wurzburg, fulda, 11)
+  map.connect(nurnberg, wurzburg, 8)
+  map.connect(nurnberg, erfurt, 21)
 
   const koln = map.create(City, 'Koln', {zone: 'blue'})
-    .connectTo(dusseldorf, 4)
-    .connectTo(dortmund, 10)
   const aachen = map.create(City, 'Aachen', {zone: 'blue'})
-    .connectTo(dusseldorf, 9)
-    .connectTo(koln, 7)
   const trier = map.create(City, 'Trier', {zone: 'blue'})
-    .connectTo(aachen, 19)
-    .connectTo(koln, 20)
   const wiesbaden = map.create(City, 'Wiesbaden', {zone: 'blue'})
-    .connectTo(koln, 21)
-    .connectTo(trier, 18)
-  map.create(City, 'Frankfurt-M', {zone: 'blue'})
-    .connectTo(dortmund, 20)
-    .connectTo(kassel, 13)
-    .connectTo(fulda, 8)
-    .connectTo(wiesbaden, 0)
-    .connectTo(wurzburg, 13)
+  const frankfurtm = map.create(City, 'Frankfurt-M', {zone: 'blue'})
   const saarbrucken = map.create(City, 'Saarbrucken', {zone: 'blue'})
-    .connectTo(trier, 11)
-    .connectTo(wiesbaden, 10)
   const mannheim = map.create(City, 'Mannheim', {zone: 'blue'})
-    .connectTo(wiesbaden, 11)
-    .connectTo(saarbrucken, 11)
-    .connectTo(wurzburg, 10)
+
+  map.connect(koln, dusseldorf, 4)
+  map.connect(koln, dortmund, 10)
+  map.connect(aachen, dusseldorf, 9)
+  map.connect(aachen, koln, 7)
+  map.connect(trier, aachen, 19)
+  map.connect(trier, koln, 20)
+  map.connect(wiesbaden, koln, 21)
+  map.connect(wiesbaden, trier, 18)
+  map.connect(frankfurtm, dortmund, 20)
+  map.connect(frankfurtm, kassel, 13)
+  map.connect(frankfurtm, fulda, 8)
+  map.connect(frankfurtm, wiesbaden, 0)
+  map.connect(frankfurtm, wurzburg, 13)
+  map.connect(saarbrucken, trier, 11)
+  map.connect(saarbrucken, wiesbaden, 10)
+  map.connect(mannheim, wiesbaden, 11)
+  map.connect(mannheim, saarbrucken, 11)
+  map.connect(mannheim, wurzburg, 10)
 
   const stuttgart = map.create(City, 'Stuttgart', {zone: 'purple'})
-    .connectTo(saarbrucken, 17)
-    .connectTo(mannheim, 6)
-    .connectTo(wurzburg, 12)
   const freiburg = map.create(City, 'Freiburg', {zone: 'purple'})
-    .connectTo(stuttgart, 16)
   const konstanz = map.create(City, 'Konstanz', {zone: 'purple'})
-    .connectTo(freiburg, 14)
-    .connectTo(stuttgart, 16)
   const augsburg = map.create(City, 'Augsburg', {zone: 'purple'})
-    .connectTo(stuttgart, 15)
-    .connectTo(konstanz, 17)
-    .connectTo(wurzburg, 19)
-    .connectTo(nurnberg, 18)
   const regensburg = map.create(City, 'Regensburg', {zone: 'purple'})
-    .connectTo(nurnberg, 12)
-    .connectTo(augsburg, 13)
   const munchen = map.create(City, 'Munchen', {zone: 'purple'})
-    .connectTo(augsburg, 6)
-    .connectTo(regensburg, 10)
-  map.create(City, 'Passau', {zone: 'purple'})
-    .connectTo(regensburg, 12)
-    .connectTo(munchen, 14)
+  const passau = map.create(City, 'Passau', {zone: 'purple'})
+
+  map.connect(stuttgart, saarbrucken, 17)
+  map.connect(stuttgart, mannheim, 6)
+  map.connect(stuttgart, wurzburg, 12)
+  map.connect(freiburg, stuttgart, 16)
+  map.connect(konstanz, freiburg, 14)
+  map.connect(konstanz, stuttgart, 16)
+  map.connect(augsburg, stuttgart, 15)
+  map.connect(augsburg, konstanz, 17)
+  map.connect(augsburg, wurzburg, 19)
+  map.connect(augsburg, nurnberg, 18)
+  map.connect(regensburg, nurnberg, 12)
+  map.connect(regensburg, augsburg, 13)
+  map.connect(munchen, augsburg, 6)
+  map.connect(munchen, regensburg, 10)
+  map.connect(passau, regensburg, 12)
+  map.connect(passau, munchen, 14)
 
   const resources = game.create(Space, 'resources');
   for (let cost = 1; cost <= 8; cost++) {
@@ -347,7 +342,7 @@ export default createGame(PowergridPlayer, Powergrid, game => {
   powerplants.onEnter(Card, c => {
     c.showToAll();
     game.applyMinimumRule();
-    powerplants.sortBy<Card>('cost');
+    powerplants.sortBy('cost');
     const discount = powerplants.first(Card, { discount: true });
     if (discount && powerplants.first(Card) !== discount) {
       game.message('Removing discount because of a lower power plant');
@@ -392,10 +387,10 @@ export default createGame(PowergridPlayer, Powergrid, game => {
       prompt: 'Choose playing zone',
       description: 'choosing playing zones',
     }).chooseOnBoard(
-      'city', () => game.all(City, city => game.zones.length === 0 || game.all(City, c => (
+      'city', () => game.all(City, city => game.zones.length === 0 || (!game.zones.includes(city.zone) && game.all(City, c => (
         !game.zones.includes(c.zone) &&
           c.adjacencies(City, z => game.zones.includes(z.zone)).length > 0
-      )).map(c => c.zone).includes(city.zone))
+      )).map(c => c.zone).includes(city.zone)))
     ).do(
       ({ city }) => { game.zones.push(city.zone) }
     ),
