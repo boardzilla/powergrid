@@ -628,31 +628,7 @@ export default createGame(PowergridPlayer, Powergrid, game => {
               {
                 name: 'auction',
                 do: [
-                  ({ auctionPlayer }) => {
-                    for (const player of game.players) player.passedThisAuction = player.havePassedAuctionPhase;
-                    game.playerWithHighestBid = auctionPlayer;
-                  },
-
-                  eachPlayer({
-                    name: 'biddingPlayer',
-                    startingPlayer: ({ auctionPlayer }) => auctionPlayer,
-                    nextPlayer: player => game.players.seatedNext(player),
-                    continueUntil: () => game.lastBid !== undefined && game.players.filter(p => !p.passedThisAuction).length === 1,
-                    do: ifElse({
-                      if: ({ biddingPlayer }) => !biddingPlayer.passedThisAuction,
-                      do: playerActions({ name: 'bid', actions: ['bid', 'passBid'] })
-                    }),
-                  }),
-
-                  ifElse({
-                    if: () => game.playerWithHighestBid!.allMy(Card).length >= 3,
-                    do: playerActions({
-                      player: () => game.playerWithHighestBid!,
-                      name: 'scrap',
-                      actions: ['scrap']
-                    }),
-                  }),
-
+                  ({ auctionPlayer }) => Do.subflow('bidding-round', { auctionPlayer }),
                   ({ auctionPlayer }) => {
                     const winner = game.playerWithHighestBid!;
                     game.message(`${winner} won the bid with ${game.lastBid}`);
@@ -663,7 +639,7 @@ export default createGame(PowergridPlayer, Powergrid, game => {
                     winner.havePassedAuctionPhase = true;
                     if (winner !== auctionPlayer) Do.repeat();
                   },
-                ],
+                ]
               },
               'passAuction'
             ]
@@ -798,5 +774,34 @@ export default createGame(PowergridPlayer, Powergrid, game => {
         }
       }
     )
+  );
+
+  game.defineSubflow(
+    'bidding-round',
+
+    ({ auctionPlayer }) => {
+      for (const player of game.players) player.passedThisAuction = player.havePassedAuctionPhase;
+      game.playerWithHighestBid = auctionPlayer;
+    },
+
+    eachPlayer({
+      name: 'biddingPlayer',
+      startingPlayer: ({ auctionPlayer }) => auctionPlayer,
+      nextPlayer: player => game.players.seatedNext(player),
+      continueUntil: () => game.lastBid !== undefined && game.players.filter(p => !p.passedThisAuction).length === 1,
+      do: ifElse({
+        if: ({ biddingPlayer }) => !biddingPlayer.passedThisAuction,
+        do: playerActions({ name: 'bid', actions: ['bid', 'passBid'] })
+      }),
+    }),
+
+    ifElse({
+      if: () => game.playerWithHighestBid!.allMy(Card).length >= 3,
+      do: playerActions({
+        player: () => game.playerWithHighestBid!,
+        name: 'scrap',
+        actions: ['scrap']
+      }),
+    }),
   );
 });

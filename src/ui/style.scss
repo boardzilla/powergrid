@@ -209,7 +209,7 @@ body {
   #deck div.count {
     text-align: right;
     position: absolute;
-    z-index: 5;
+    z-index: 50;
     color: #fff5;
     top: 20%;
     right: 0;
@@ -228,7 +228,7 @@ body {
 
     &[data-auction=true] {
       transform: scale(1.25);
-      z-index: 10;
+      z-index: 50;
     }
 
     > div.outer {
@@ -396,6 +396,9 @@ body {
   }
   &.step-auction, &.step-bid, &.step-purchaseResources {
     text-align: right;
+  }
+  &.step-bid button {
+    width: 4em;
   }
 }
 
